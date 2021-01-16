@@ -19,3 +19,7 @@ add_executable(
     mac_time_tracker
     src/mac_time_tracker.cpp
 )
+target_link_libraries(
+    mac_time_tracker
+    ${Boost_LIBRARIES}
+)
