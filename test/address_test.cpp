@@ -6,6 +6,28 @@
 
 namespace mtt = mac_time_tracker;
 
+TEST(Address, constructor) {
+  // Valid constructors
+  const mtt::Address a = {};
+  const mtt::Address b = {0x01, 0xAB, 0x23, 0xCD, 0x45, 0xEF};
+  EXPECT_EQ(0x01, b[0]);
+  EXPECT_EQ(0xAB, b[1]);
+  EXPECT_EQ(0x23, b[2]);
+  EXPECT_EQ(0xCD, b[3]);
+  EXPECT_EQ(0x45, b[4]);
+  EXPECT_EQ(0xEF, b[5]);
+  const mtt::Address c = b;
+  EXPECT_EQ(b[0], c[0]);
+  EXPECT_EQ(b[1], c[1]);
+  EXPECT_EQ(b[2], c[2]);
+  EXPECT_EQ(b[3], c[3]);
+  EXPECT_EQ(b[4], c[4]);
+  EXPECT_EQ(b[5], c[5]);
+  // Invalid constructors
+  // const mtt::Address d = {0x01, 0xAB, 0x23, 0xCD, 0x45};
+  // const mtt::Address e = {0x01, 0xAB, 0x23, 0xCD, 0x45, 0xEF, 0x67};
+}
+
 TEST(Address, fromStr) {
   // Invalid constructions
   EXPECT_THROW(mtt::Address::fromStr(""), std::runtime_error);
@@ -37,8 +59,9 @@ TEST(Address, fromStr) {
 }
 
 TEST(Address, toStr) {
-  EXPECT_STREQ(mtt::Address::fromStr("00:aa:11:BB:22:cc").toStr().c_str(), "00:AA:11:BB:22:CC");
-  EXPECT_STREQ(mtt::Address::fromStr("00:aA:11:bB:22:Cc").toStr('-').c_str(), "00-AA-11-BB-22-CC");
+  const mtt::Address a = {0x00, 0xAA, 0x11, 0xBB, 0x22, 0xCC};
+  EXPECT_STREQ(a.toStr().c_str(), "00:AA:11:BB:22:CC");
+  EXPECT_STREQ(a.toStr('-').c_str(), "00-AA-11-BB-22-CC");
 }
 
 int main(int argc, char *argv[]) {
