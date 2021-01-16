@@ -10,7 +10,6 @@
 
 #include <boost/bimap/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/bimap/set_of.hpp>
 
 #include <mac_time_tracker/address.hpp>
 #include <mac_time_tracker/csv.hpp>
@@ -23,29 +22,29 @@ namespace mac_time_tracker {
 // Bimap of timestamp and category name with info of address
 // to represent time history of address appearance
 
-class TimeBimap
-    : public boost::bimaps::bimap<
-          boost::bimaps::multiset_of<boost::bimaps::tagged<Time, std::integral_constant<int, 0>>>,
-          boost::bimaps::multiset_of<
-              boost::bimaps::tagged<std::string, std::integral_constant<int, 1>>>,
-          boost::bimaps::with_info<
-              boost::bimaps::tagged<Address, std::integral_constant<int, 2>>>> {
+struct TimeBimapTrait {
+  using TimeTag = std::integral_constant<int, 0>;
+  using CategoryTag = std::integral_constant<int, 1>;
+  using AddressTag = std::integral_constant<int, 2>;
+
+  template <class Type, class Tag> using Tagged = boost::bimaps::tagged<Type, Tag>;
+  using TimeCollection = boost::bimaps::multiset_of<Tagged<Time, TimeTag>>;
+  using CategoryCollection = boost::bimaps::multiset_of<Tagged<std::string, CategoryTag>>;
+  using AddressInfo = boost::bimaps::with_info<Tagged<Address, AddressTag>>;
+
+  using Base = boost::bimaps::bimap<TimeCollection, CategoryCollection, AddressInfo>;
+};
+
+class TimeBimap : public TimeBimapTrait::Base {
 private:
-  using Base = boost::bimaps::bimap<
-      boost::bimaps::multiset_of<
-          boost::bimaps::tagged<Time, std::integral_constant<int, 0>>>, // Time
-      boost::bimaps::multiset_of<
-          boost::bimaps::tagged<std::string, std::integral_constant<int, 1>>>, // Category
-      boost::bimaps::with_info<
-          boost::bimaps::tagged<Address, std::integral_constant<int, 2>>> // Address
-      >;
+  using Base = TimeBimapTrait::Base;
 
 public:
   // Tags
   struct Tags {
-    using Time = std::integral_constant<int, 0>;
-    using Category = std::integral_constant<int, 1>;
-    using Address = std::integral_constant<int, 2>;
+    using Time = TimeBimapTrait::TimeTag;
+    using Category = TimeBimapTrait::CategoryTag;
+    using Address = TimeBimapTrait::AddressTag;
   };
 
 public:

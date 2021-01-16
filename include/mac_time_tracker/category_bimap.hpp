@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 #include <string>
-#include <type_traits>
+#include <type_traits> // for std::integral_constant<>
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/bimap/bimap.hpp>
@@ -20,29 +20,29 @@ namespace mac_time_tracker {
 // Bimap of category name and MAC address with info of description
 // to represent known addresses
 
-class CategoryBimap
-    : public boost::bimaps::bimap<
-          boost::bimaps::multiset_of<
-              boost::bimaps::tagged<std::string, std::integral_constant<int, 0>>>,
-          boost::bimaps::set_of<boost::bimaps::tagged<Address, std::integral_constant<int, 1>>>,
-          boost::bimaps::with_info<
-              boost::bimaps::tagged<std::string, std::integral_constant<int, 2>>>> {
+struct CategoryBimapTrait {
+  using CategoryTag = std::integral_constant<int, 0>;
+  using AddressTag = std::integral_constant<int, 1>;
+  using DescriptionTag = std::integral_constant<int, 2>;
+
+  template <class Type, class Tag> using Tagged = boost::bimaps::tagged<Type, Tag>;
+  using CategoryCollection = boost::bimaps::multiset_of<Tagged<std::string, CategoryTag>>;
+  using AddressCollection = boost::bimaps::set_of<Tagged<Address, AddressTag>>;
+  using DescriptionInfo = boost::bimaps::with_info<Tagged<std::string, DescriptionTag>>;
+
+  using Base = boost::bimaps::bimap<CategoryCollection, AddressCollection, DescriptionInfo>;
+};
+
+class CategoryBimap : public CategoryBimapTrait::Base {
 private:
-  using Base = boost::bimaps::bimap<
-      boost::bimaps::multiset_of<
-          boost::bimaps::tagged<std::string, std::integral_constant<int, 0>>>, // Category
-      boost::bimaps::set_of<
-          boost::bimaps::tagged<Address, std::integral_constant<int, 1>>>, // Address
-      boost::bimaps::with_info<
-          boost::bimaps::tagged<std::string, std::integral_constant<int, 2>>> // Description
-      >;
+  using Base = CategoryBimapTrait::Base;
 
 public:
   // Tags
   struct Tags {
-    using Category = std::integral_constant<int, 0>;
-    using Address = std::integral_constant<int, 1>;
-    using Description = std::integral_constant<int, 2>;
+    using Category = CategoryBimapTrait::CategoryTag;
+    using Address = CategoryBimapTrait::AddressTag;
+    using Description = CategoryBimapTrait::DescriptionTag;
   };
 
 public:
@@ -55,7 +55,7 @@ public:
   //     0: <c[0]>, <a[0][0]>, <d[0][0]>, ..., <d[0][i]>, <d[0][i]>
   //   ...
   //     k: <c[k]>, <a[k][0]>, <d[k][0]>, ..., <d[k][j]>, <d[k][j]>
-  // where c[n]    -> n-th category, 
+  // where c[n]    -> n-th category,
   //       a[n][m] -> m-th MAC address in n-th category
   //       d[n][m] -> description of a[n][m]
   static CategoryBimap fromFile(const std::string &filename) {
