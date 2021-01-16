@@ -71,7 +71,6 @@ public:
         map.insert({/* category = */ boost::trim_copy(line[0]),
                     /* addr[i] = */ Address::fromStr(boost::trim_copy(line[i])),
                     /* desc[i] = */ boost::trim_copy(line[i + 1])});
-        const std::string &s = line[0];
       }
     }
     return map;
