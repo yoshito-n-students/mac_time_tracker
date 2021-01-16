@@ -4,8 +4,11 @@
 #include <array>
 #include <cstdint>
 #include <cstdio>
+#include <regex>
 #include <stdexcept>
 #include <string>
+
+#include <boost/algorithm/string/trim.hpp>
 
 namespace mac_time_tracker {
 
@@ -15,7 +18,13 @@ namespace mac_time_tracker {
 class Address : public std::array<std::uint8_t, 6> {
 public:
   // make an instance from "00:AA:11:bb:22:Cc" or "0a-1B-2c-3D-4e-5F"
-  static Address fromStr(const std::string &str) {
+  static Address fromStr(const std::string &_str) {
+    // remove leading and trailing spaces and check the length
+    const std::string str = boost::trim_copy(_str);
+    if (str.length() != 17) {
+      throw std::runtime_error("Address::fromStr(): length of '" + str + "' is not 17");
+    }
+
     Address addr;
     // sscanf returns number of items scanned, which is 6 on success
     //   "%2hhx"   -> 2 chars (2) of hex (x) to uint8_t (hh)
