@@ -17,6 +17,17 @@ namespace mac_time_tracker {
 
 class Address : public std::array<std::uint8_t, 6> {
 public:
+  Address() {}
+  Address(const std::uint8_t v0, const std::uint8_t v1, const std::uint8_t v2,
+          const std::uint8_t v3, const std::uint8_t v4, const std::uint8_t v5) {
+    (*this)[0] = v0;
+    (*this)[1] = v1;
+    (*this)[2] = v2;
+    (*this)[3] = v3;
+    (*this)[4] = v4;
+    (*this)[5] = v5;
+  }
+
   // make an instance from "00:AA:11:bb:22:Cc" or "0a-1B-2c-3D-4e-5F"
   static Address fromStr(const std::string &_str) {
     // remove leading and trailing spaces and check the length
