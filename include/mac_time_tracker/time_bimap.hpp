@@ -59,7 +59,7 @@ public:
     const TimeView &time_view = by<Tags::Time>();
     std::vector<Time> times;
     for (TimeView::const_iterator it = time_view.begin(); it != time_view.end();
-         it = time_view.equal_range(it->first).second) {
+         it = time_view.upper_bound(it->first)) {
       times.push_back(it->first);
     }
     return times;
@@ -71,7 +71,7 @@ public:
     const CategoryView &category_view = by<Tags::Category>();
     std::vector<std::string> categories;
     for (CategoryView::const_iterator it = category_view.begin(); it != category_view.end();
-         it = category_view.equal_range(it->first).second) {
+         it = category_view.upper_bound(it->first)) {
       categories.push_back(it->first);
     }
     return categories;
