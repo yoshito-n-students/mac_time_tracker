@@ -95,10 +95,11 @@ public:
 
   // make a CSV like
   //       0: "Category", <t[0]>,          ... , <t[n]>
-  //       1: <c[0]>,     <a(t[0], c[0])>, ... , <a(t[n], c[0])
+  //       1: <c[0]>,     <a(t[0], c[0])>, ... , <a(t[n], c[0])>
   //     ...
-  //   m + 1: <c[m]>,     <a(t[0], c[m])>, ... , <a(t[n], c[m])
-  // whare t[i] -> i-th time, c[i] -> i-th category,
+  //   m + 1: <c[m]>,     <a(t[0], c[m])>, ... , <a(t[n], c[m])>
+  // whare t[i]          -> i-th time,
+  //       c[i]          -> i-th category,
   //       a(t[i], c[j]) -> addresses associated t[i] and c[j]
   CSV toCSV() const {
     // Collect times and catecories in strage

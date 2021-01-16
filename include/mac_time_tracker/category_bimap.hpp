@@ -55,7 +55,8 @@ public:
   //     0: <c[0]>, <a[0][0]>, <d[0][0]>, ..., <d[0][i]>, <d[0][i]>
   //   ...
   //     k: <c[k]>, <a[k][0]>, <d[k][0]>, ..., <d[k][j]>, <d[k][j]>
-  // where c[n] -> n-th category, a[n][m] -> m-th MAC address in n-th category
+  // where c[n]    -> n-th category, 
+  //       a[n][m] -> m-th MAC address in n-th category
   //       d[n][m] -> description of a[n][m]
   static CategoryBimap fromFile(const std::string &filename) {
     CategoryBimap map;
@@ -68,8 +69,8 @@ public:
       for (std::size_t i = 1; i < line.size(); i += 2) {
         // boost::trim_copy() removes leading and trailing spaces
         map.insert({/* category = */ boost::trim_copy(line[0]),
-                    /* addri = */ Address::fromStr(boost::trim_copy(line[i])),
-                    /* desci = */ boost::trim_copy(line[i + 1])});
+                    /* addr[i] = */ Address::fromStr(boost::trim_copy(line[i])),
+                    /* desc[i] = */ boost::trim_copy(line[i + 1])});
         const std::string &s = line[0];
       }
     }
