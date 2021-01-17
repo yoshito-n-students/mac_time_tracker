@@ -3,7 +3,6 @@
 
 #include <stdexcept>
 #include <string>
-#include <type_traits> // for std::integral_constant<>
 
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/bimap/bimap.hpp>
@@ -21,9 +20,9 @@ namespace mac_time_tracker {
 // to represent known addresses
 
 struct CategoryBimapTrait {
-  using CategoryTag = std::integral_constant<int, 0>;
-  using AddressTag = std::integral_constant<int, 1>;
-  using DescriptionTag = std::integral_constant<int, 2>;
+  struct CategoryTag {};
+  struct AddressTag {};
+  struct DescriptionTag {};
 
   template <class Type, class Tag> using Tagged = boost::bimaps::tagged<Type, Tag>;
   using CategoryCollection = boost::bimaps::multiset_of<Tagged<std::string, CategoryTag>>;

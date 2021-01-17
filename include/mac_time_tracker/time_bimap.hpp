@@ -4,8 +4,7 @@
 #include <algorithm>
 #include <set>
 #include <string>
-#include <type_traits> // for std::integral_constant<>
-#include <utility>     // for std::pair<>
+#include <utility> // for std::pair<>
 #include <vector>
 
 #include <boost/bimap/bimap.hpp>
@@ -23,9 +22,9 @@ namespace mac_time_tracker {
 // to represent time history of address appearance
 
 struct TimeBimapTrait {
-  using TimeTag = std::integral_constant<int, 0>;
-  using CategoryTag = std::integral_constant<int, 1>;
-  using AddressTag = std::integral_constant<int, 2>;
+  struct TimeTag {};
+  struct CategoryTag {};
+  struct AddressTag {};
 
   template <class Type, class Tag> using Tagged = boost::bimaps::tagged<Type, Tag>;
   using TimeCollection = boost::bimaps::multiset_of<Tagged<Time, TimeTag>>;
