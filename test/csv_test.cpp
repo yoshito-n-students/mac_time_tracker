@@ -110,6 +110,10 @@ TEST(CSV, fromFile) {
   // L10
   EXPECT_EQ(3, csv[10].size());
   EXPECT_STREQ(" ", csv[10][2].c_str());
+  // Failure cases
+  EXPECT_THROW(mtt::CSV::fromFile("/dir_that_does_not_exist/" + temp_file), std::runtime_error);
+  EXPECT_THROW(mtt::CSV::fromFile(temp_file + "_suffix_that_makes_filename_invalid"),
+               std::runtime_error);
 }
 
 TEST(CSV, toFile) {
