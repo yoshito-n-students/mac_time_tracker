@@ -60,6 +60,18 @@ gtest_discover_tests(
 )
 
 add_executable(
+    set_test
+    test/set_test.cpp
+)
+target_link_libraries(
+    set_test
+    GTest::GTest
+)
+gtest_discover_tests(
+    set_test
+)
+
+add_executable(
     time_test
     test/time_test.cpp
 )
