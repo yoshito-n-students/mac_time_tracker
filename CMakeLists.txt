@@ -33,6 +33,8 @@ target_link_libraries(
 ########
 # Tests
 
+enable_testing()
+
 add_executable(
     address_test
     test/address_test.cpp
