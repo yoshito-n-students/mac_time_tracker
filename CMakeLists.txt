@@ -48,6 +48,18 @@ gtest_discover_tests(
 )
 
 add_executable(
+    csv_test
+    test/csv_test.cpp
+)
+target_link_libraries(
+    csv_test
+    GTest::GTest
+)
+gtest_discover_tests(
+    csv_test
+)
+
+add_executable(
     time_test
     test/time_test.cpp
 )
