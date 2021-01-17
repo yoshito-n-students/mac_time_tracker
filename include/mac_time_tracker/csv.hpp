@@ -52,12 +52,15 @@ public:
     }
 
     for (const std::vector<std::string> &line : *this) {
-      if (line.size() > 1) {
-        ofs << "\"" << boost::replace_all_copy(line[0], "\"", "\\\"") // espcae "
-            << "\"";
-      }
-      for (std::size_t i = 1; i < line.size(); ++i) {
-        ofs << ",\"" << boost::replace_all_copy(line[i], "\"", "\\\"") << "\"";
+      for (std::size_t i = 0; i < line.size(); ++i) {
+        if (i > 0) {
+          ofs << ",";
+        }
+        std::string escaped = line[i];
+        boost::replace_all(escaped, R"(\)", R"(\\)"); // escape ch
+        boost::replace_all(escaped, R"(")", R"(\")"); // quote
+        boost::replace_all(escaped, "\n", R"(\n)");   // new line
+        ofs << "\"" << escaped << "\"";
       }
       ofs << "\n";
     }
