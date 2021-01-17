@@ -29,19 +29,6 @@ TEST(Address, constructor) {
 }
 
 TEST(Address, fromStr) {
-  // Invalid constructions
-  ASSERT_THROW(mtt::Address::fromStr(""), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("192.168.0.1"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("00:11:22"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("00:11:22:33:AA:BB:CC:DD"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("000:11:22:33:AA:BB:CC"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("0:11:22:33:AA:BB:CC"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("BB:CC:DD:EE:FF:GG"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("00: 11:22:33:44:55"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("AA-00-BB-11"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("AA-00-BB-11-aa-22-dd"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("gg-ff-ee-dd-cc-bb"), std::runtime_error);
-  ASSERT_THROW(mtt::Address::fromStr("00:AA-11:bb- 22:Cc"), std::runtime_error);
   // Valid constructions
   ASSERT_NO_THROW(mtt::Address::fromStr("00:11:22:33:44:55"));
   ASSERT_NO_THROW(mtt::Address::fromStr("00:aa:11:BB:44:cc"));
@@ -49,6 +36,19 @@ TEST(Address, fromStr) {
   ASSERT_NO_THROW(mtt::Address::fromStr("00:AA-11:bb-22:Cc"));
   ASSERT_NO_THROW(mtt::Address::fromStr(" 00:AA-11:bb-22:Cc"));
   ASSERT_NO_THROW(mtt::Address::fromStr("00:AA-11:bb-22:Cc "));
+  // Invalid constructions
+  ASSERT_THROW(mtt::Address::fromStr(""), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("192.168.0.1"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("00:11:22"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("00:11:22:33:AA:BB:CC:DD"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("000:11:22:AA:BB:CC"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("0:11:22:AA:BB:CC"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("BB:CC:DD:EE:FF:GG"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("00: 11:22:33:44:55"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("AA-00-BB-11"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("AA-00-BB-11-aa-22-dd"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("gg-ff-ee-dd-cc-bb"), std::runtime_error);
+  ASSERT_THROW(mtt::Address::fromStr("00:AA-11:bb-22 :Cc"), std::runtime_error);
   // Same addresses
   ASSERT_EQ(mtt::Address::fromStr("00:11:22:33:44:55"), mtt::Address::fromStr("00-11-22-33-44-55"));
   ASSERT_EQ(mtt::Address::fromStr("00:11-22:33-44:55"), mtt::Address::fromStr("00-11:22-33:44-55"));
