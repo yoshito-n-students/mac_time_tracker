@@ -4,18 +4,23 @@
 #include <chrono>
 #include <thread>
 
-#include <mac_time_tracker/time.hpp>
-
 namespace mac_time_tracker {
 
 class Rate {
-public:
-  template <typename Duration>
-  Rate(const Duration &period)
-      : period_(std::chrono::duration_cast<Time::duration>(period)),
-        start_time_(Time::clock::now()) {}
+private:
+  // use a steady clock because the system clock may be syncronized or adjusted during operation
+  using Clock = std::chrono::steady_clock;
 
-  Time::duration period() const { return period_; }
+public:
+  using Time = Clock::time_point;
+  using Duration = Clock::duration;
+
+public:
+  template <typename OtherDuration>
+  Rate(const OtherDuration &period)
+      : period_(std::chrono::duration_cast<Duration>(period)), start_time_(Clock::now()) {}
+
+  Duration period() const { return period_; }
 
   Time startTime() const { return start_time_; }
 
@@ -25,12 +30,12 @@ public:
     //   # while(start_time_ < now){
     //   #   start_time_ += period_;
     //   # }
-    start_time_ += ((Time::clock::now() - start_time_) / period_ + 1) * period_;
+    start_time_ += ((Clock::now() - start_time_) / period_ + 1) * period_;
     std::this_thread::sleep_until(start_time_);
   }
 
 private:
-  const Time::duration period_;
+  const Duration period_;
   Time start_time_;
 };
 
