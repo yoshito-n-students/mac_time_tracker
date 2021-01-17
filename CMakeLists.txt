@@ -46,3 +46,15 @@ target_link_libraries(
 gtest_discover_tests(
     address_test
 )
+
+add_executable(
+    time_test
+    test/time_test.cpp
+)
+target_link_libraries(
+    time_test
+    GTest::GTest
+)
+gtest_discover_tests(
+    time_test
+)
