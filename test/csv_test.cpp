@@ -140,8 +140,3 @@ TEST(CSV, toFile) {
   ASSERT_EQ(1, dst_csv[3].size()); // L3
   ASSERT_EQ(src_csv, dst_csv);     // all
 }
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

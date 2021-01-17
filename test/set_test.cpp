@@ -31,8 +31,3 @@ TEST(Set, generalUse) {
   ASSERT_EQ(set.end(), set.find(addr[0]));
   ASSERT_EQ(0, set.erase(addr[0]));
 }
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

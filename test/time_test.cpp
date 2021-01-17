@@ -31,8 +31,3 @@ TEST(Time, toStr) {
   ASSERT_TRUE(std::regex_match(t1.toStr(fmt_custom), re_custom));
   ASSERT_STRNE(t0.toStr(fmt_custom).c_str(), t1.toStr(fmt_custom).c_str());
 }
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

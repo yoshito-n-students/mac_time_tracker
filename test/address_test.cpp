@@ -63,8 +63,3 @@ TEST(Address, toStr) {
   ASSERT_STREQ(a.toStr().c_str(), "00:AA:11:BB:22:CC");
   ASSERT_STREQ(a.toStr('-').c_str(), "00-AA-11-BB-22-CC");
 }
-
-int main(int argc, char *argv[]) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

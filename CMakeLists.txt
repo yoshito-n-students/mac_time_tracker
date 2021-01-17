@@ -36,49 +36,17 @@ target_link_libraries(
 enable_testing()
 
 add_executable(
-    address_test
+    unit_tests
+    test/main.cpp
     test/address_test.cpp
-)
-target_link_libraries(
-    address_test
-    GTest::GTest
-)
-gtest_discover_tests(
-    address_test
-)
-
-add_executable(
-    csv_test
     test/csv_test.cpp
-)
-target_link_libraries(
-    csv_test
-    GTest::GTest
-)
-gtest_discover_tests(
-    csv_test
-)
-
-add_executable(
-    set_test
     test/set_test.cpp
-)
-target_link_libraries(
-    set_test
-    GTest::GTest
-)
-gtest_discover_tests(
-    set_test
-)
-
-add_executable(
-    time_test
     test/time_test.cpp
 )
 target_link_libraries(
-    time_test
+    unit_tests
     GTest::GTest
 )
 gtest_discover_tests(
-    time_test
+    unit_tests
 )
