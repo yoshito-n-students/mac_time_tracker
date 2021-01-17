@@ -8,40 +8,9 @@
 
 #include <mac_time_tracker/csv.hpp>
 
+#include "make_temp_file.hpp"
+
 namespace mtt = mac_time_tracker;
-
-// makes temp file with contents
-std::string makeTempFile(const std::string &contents = "") {
-  // makes empty temp file
-  char filename[256];
-  {
-    FILE *const fp = popen("mktemp", "r");
-    if (!fp) {
-      throw std::runtime_error("makeTempFile(): popen");
-    }
-
-    if (fscanf(fp, "%s", filename) != 1) {
-      throw std::runtime_error("makeTempFile(): fscanf");
-    }
-
-    pclose(fp);
-  }
-
-  // write contents to the temp file
-  if (!contents.empty()) {
-    std::ofstream ofs(filename);
-    if (!ofs) {
-      throw std::runtime_error("makeTempFile(): opening std::ofstream");
-    }
-
-    ofs << contents;
-    if (!ofs) {
-      throw std::runtime_error("makeTempFile(): writing to std::ofstream");
-    }
-  }
-
-  return filename;
-}
 
 TEST(CSV, fromFile) {
   // make csv file in system temp directory
