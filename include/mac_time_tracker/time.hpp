@@ -20,6 +20,9 @@ public:
   Time(const Base &base) : Base(base) {}
   Time(Base &&base) : Base(base) {}
 
+  // A shortcut to Time::clock::now()
+  static Time now() { return clock::now(); }
+
   // Convert to string. The default format is based on ISO 8601 ("Y-M-D H:M:S")
   std::string toStr(const std::string &fmt = "%F %T") const {
     const std::time_t t = clock::to_time_t(*this);

@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     mtt::Rate rate(scan_period * std::chrono::seconds(1));
     for (int i = 0;; ++i) {
       std::cout << "Scanning present addresses ... (#" << i << ")" << std::endl;
-      const mtt::Time stamp = rate.startTime();
+      const mtt::Time stamp = mtt::Time::now();
       const mtt::Set present_addrs = mtt::Set::fromARPScan();
       for (const mtt::Address &addr : present_addrs) {
         using Tags = mtt::CategoryBimap::Tags;
