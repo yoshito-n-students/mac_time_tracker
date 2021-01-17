@@ -18,6 +18,7 @@ namespace bpo = boost::program_options;
 namespace mtt = mac_time_tracker;
 
 int main(int argc, char *argv[]) {
+  // Parse command line args
   std::string known_addr_file, tracked_addr_file;
   double scan_period;
   {
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]) {
   }
 
   try {
+    // Step 1: Load known addresses
     std::cout << "Loading known addresses from '" << known_addr_file << "' ..." << std::endl;
     const mtt::CategoryBimap known_addrs = mtt::CategoryBimap::fromFile(known_addr_file);
     for (const mtt::CategoryBimap::value_type &addr : known_addrs) {
@@ -52,6 +54,7 @@ int main(int argc, char *argv[]) {
     mtt::TimeBimap tracked_addrs;
     mtt::Rate rate(scan_period * std::chrono::seconds(1));
     for (int i = 0;; ++i) {
+      // Step 2: Scan addresses in network
       std::cout << "Scanning present addresses ... (#" << i << ")" << std::endl;
       const mtt::Time stamp = mtt::Time::now();
       const mtt::Set present_addrs = mtt::Set::fromARPScan();
@@ -69,9 +72,13 @@ int main(int argc, char *argv[]) {
           tracked_addrs.insert({stamp, "Unknown", addr});
         }
       }
+
+      // Step 3: Save scan results organized using knowledge
       std::cout << "Saving tracked addresses to '" << tracked_addr_file << "' ..." << std::flush;
       tracked_addrs.toCSV().toFile(tracked_addr_file);
       std::cout << " done" << std::endl;
+
+      // Step 4: Sleep until the next scan
       rate.sleep();
     }
   } catch (const std::exception &err) {
