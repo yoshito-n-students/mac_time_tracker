@@ -71,48 +71,48 @@ TEST(CSV, fromFile) {
   // read the file
   const mtt::CSV csv = mtt::CSV::fromFile(temp_file);
   // number of lines
-  EXPECT_EQ(11, csv.size());
+  ASSERT_EQ(11, csv.size());
   // L0
-  EXPECT_EQ(3, csv[0].size());
-  EXPECT_STREQ("Field 0", csv[0][0].c_str());
-  EXPECT_STREQ("Field 1", csv[0][1].c_str());
-  EXPECT_STREQ("Field 2", csv[0][2].c_str());
+  ASSERT_EQ(3, csv[0].size());
+  ASSERT_STREQ("Field 0", csv[0][0].c_str());
+  ASSERT_STREQ("Field 1", csv[0][1].c_str());
+  ASSERT_STREQ("Field 2", csv[0][2].c_str());
   // L1
-  EXPECT_EQ(3, csv[1].size());
-  EXPECT_STREQ("Field 1, with comma", csv[1][1].c_str());
+  ASSERT_EQ(3, csv[1].size());
+  ASSERT_STREQ("Field 1, with comma", csv[1][1].c_str());
   // L2
-  EXPECT_EQ(3, csv[2].size());
-  EXPECT_STREQ(R"(Field 1 with "embedded quote")", csv[2][1].c_str());
+  ASSERT_EQ(3, csv[2].size());
+  ASSERT_STREQ(R"(Field 1 with "embedded quote")", csv[2][1].c_str());
   // L3
-  EXPECT_EQ(3, csv[3].size());
-  EXPECT_STREQ("Field 1 with \n new line", csv[3][1].c_str());
+  ASSERT_EQ(3, csv[3].size());
+  ASSERT_STREQ("Field 1 with \n new line", csv[3][1].c_str());
   // L4
-  EXPECT_EQ(3, csv[4].size());
-  EXPECT_STREQ(R"(Field 1 with embedded \)", csv[4][1].c_str());
-  EXPECT_STREQ(R"(Field 2 with two embedded \\)", csv[4][2].c_str());
+  ASSERT_EQ(3, csv[4].size());
+  ASSERT_STREQ(R"(Field 1 with embedded \)", csv[4][1].c_str());
+  ASSERT_STREQ(R"(Field 2 with two embedded \\)", csv[4][2].c_str());
   // L5
-  EXPECT_EQ(3, csv[5].size());
-  EXPECT_STREQ("Complex field 1"
+  ASSERT_EQ(3, csv[5].size());
+  ASSERT_STREQ("Complex field 1"
                "\n"
                R"(with "," and "\")",
                csv[5][1].c_str());
   // L6
-  EXPECT_EQ(0, csv[6].size());
+  ASSERT_EQ(0, csv[6].size());
   // L7
-  EXPECT_EQ(3, csv[7].size());
-  EXPECT_STREQ("", csv[7][0].c_str());
+  ASSERT_EQ(3, csv[7].size());
+  ASSERT_STREQ("", csv[7][0].c_str());
   // L8
-  EXPECT_EQ(3, csv[8].size());
-  EXPECT_STREQ(" ", csv[8][0].c_str());
+  ASSERT_EQ(3, csv[8].size());
+  ASSERT_STREQ(" ", csv[8][0].c_str());
   // L9
-  EXPECT_EQ(3, csv[9].size());
-  EXPECT_STREQ("", csv[9][2].c_str());
+  ASSERT_EQ(3, csv[9].size());
+  ASSERT_STREQ("", csv[9][2].c_str());
   // L10
-  EXPECT_EQ(3, csv[10].size());
-  EXPECT_STREQ(" ", csv[10][2].c_str());
+  ASSERT_EQ(3, csv[10].size());
+  ASSERT_STREQ(" ", csv[10][2].c_str());
   // Failure cases
-  EXPECT_THROW(mtt::CSV::fromFile("/dir_that_does_not_exist/" + temp_file), std::runtime_error);
-  EXPECT_THROW(mtt::CSV::fromFile(temp_file + "_suffix_that_makes_filename_invalid"),
+  ASSERT_THROW(mtt::CSV::fromFile("/dir_that_does_not_exist/" + temp_file), std::runtime_error);
+  ASSERT_THROW(mtt::CSV::fromFile(temp_file + "_suffix_that_makes_filename_invalid"),
                std::runtime_error);
 }
 
@@ -133,12 +133,12 @@ TEST(CSV, toFile) {
   src_csv.toFile(temp_dst_file);
   const mtt::CSV dst_csv = mtt::CSV::fromFile(temp_dst_file);
   // compare data from the source and destination files
-  EXPECT_EQ(4, dst_csv.size());    // number of lines
-  EXPECT_EQ(4, dst_csv[0].size()); // L0
-  EXPECT_EQ(2, dst_csv[1].size()); // L1
-  EXPECT_EQ(2, dst_csv[2].size()); // L2
-  EXPECT_EQ(1, dst_csv[3].size()); // L3
-  EXPECT_EQ(src_csv, dst_csv);     // all
+  ASSERT_EQ(4, dst_csv.size());    // number of lines
+  ASSERT_EQ(4, dst_csv[0].size()); // L0
+  ASSERT_EQ(2, dst_csv[1].size()); // L1
+  ASSERT_EQ(2, dst_csv[2].size()); // L2
+  ASSERT_EQ(1, dst_csv[3].size()); // L3
+  ASSERT_EQ(src_csv, dst_csv);     // all
 }
 
 int main(int argc, char *argv[]) {
