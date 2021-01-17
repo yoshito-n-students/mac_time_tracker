@@ -65,11 +65,16 @@ public:
                                  boost::lexical_cast<std::string>(line.size()) +
                                  ") in a line of '" + filename + "'");
       }
+      // boost::trim_copy() removes leading and trailing spaces
+      const std::string category = boost::trim_copy(line[0]);
       for (std::size_t i = 1; i < line.size(); i += 2) {
-        // boost::trim_copy() removes leading and trailing spaces
-        map.insert({/* category = */ boost::trim_copy(line[0]),
-                    /* addr[i] = */ Address::fromStr(boost::trim_copy(line[i])),
-                    /* desc[i] = */ boost::trim_copy(line[i + 1])});
+        const Address addr = Address::fromStr(boost::trim_copy(line[i]));
+        const std::string desc = boost::trim_copy(line[i + 1]);
+        if (!map.insert({category, addr, desc}).second) {
+          throw std::runtime_error("CategoryBimap::fromFile(): Cannot insert an item {'" +
+                                   category + "', " + addr.toStr() + ", '" + desc + "'} from '" +
+                                   filename + "'. Non-unique MAC address?");
+        }
       }
     }
     return map;
