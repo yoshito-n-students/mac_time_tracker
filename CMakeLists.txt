@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(mac_time_tracker)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -O2)
 
 find_package(
     Boost REQUIRED
