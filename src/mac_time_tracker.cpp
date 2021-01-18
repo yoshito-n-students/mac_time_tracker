@@ -19,7 +19,7 @@
 namespace mtt = mac_time_tracker;
 
 struct Parameters {
-  std::string known_addr_file, tracked_addr_file_fmt;
+  std::string known_addr_file, tracked_addr_file_fmt, unknown_category;
   std::chrono::seconds scan_period;
   std::chrono::minutes track_period;
   bool verbose;
@@ -43,6 +43,8 @@ struct Parameters {
          bpo::value(&params.tracked_addr_file_fmt)
              ->default_value("tracked_addresses_%Y-%m-%d-%H-%M-%S.csv"),
          "path to output .csv file that contains tracked MAC addresses") //
+        ("unknown-categoty", bpo::value(&params.unknown_category)->default_value("Unknown"),
+         "category name for unknown addresses") //
         ("scan-period", bpo::value(&scan_period)->default_value(300),
          "period of MAC address scan in seconds") //
         ("track-period", bpo::value(&track_period)->default_value(60),
@@ -140,7 +142,7 @@ int main(int argc, char *argv[]) {
           if (it != view.end()) {
             tracked_addrs.insert({present_time, it->get<Tags::Category>(), addr});
           } else {
-            tracked_addrs.insert({present_time, "Unknown", addr});
+            tracked_addrs.insert({present_time, params.unknown_category, addr});
           }
         }
         if (params.verbose) {
