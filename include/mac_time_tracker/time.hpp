@@ -19,6 +19,9 @@ public:
   using Base::Base;
   Time(const Base &base) : Base(base) {}
   Time(Base &&base) : Base(base) {}
+  template <class Duration>
+  Time(const std::chrono::time_point<clock, Duration> &t)
+      : Base(std::chrono::time_point_cast<Base>(t)) {}
 
   // A shortcut to Time::clock::now()
   static Time now() { return clock::now(); }
