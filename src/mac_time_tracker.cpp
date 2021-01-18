@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Main loop (never returns)
-  while (true) {
+  for (int i = 0;; ++i) {
     // Step 1: Load known addresses
     mtt::CategoryBimap known_addrs;
     try {
@@ -128,6 +128,12 @@ int main(int argc, char *argv[]) {
     const std::string tracked_addr_file =
         start_time.toStr(params.tracked_addr_file_fmt); // output filename
     mtt::TimeBimap tracked_addrs;                       // storage
+    if (params.verbose) {
+      std::cout << "Tracking period #" << i << "\n"
+                << "     start: " << start_time.toStr() << "\n"
+                << "       end: " << end_time.toStr() << "\n"
+                << "    output: " << tracked_addr_file << std::endl;
+    }
 
     // Tracking loop
     mtt::Rate rate(params.scan_period);
@@ -153,9 +159,6 @@ int main(int argc, char *argv[]) {
 
         // Step 3: Save scan results
         tracked_addrs.toCSV().toFile(tracked_addr_file);
-        if (params.verbose) {
-          std::cout << "Tracked addresses was saved to " << tracked_addr_file << std::endl;
-        }
       } catch (const std::exception &err) {
         std::cerr << err.what() << std::endl;
       }
