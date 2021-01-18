@@ -31,14 +31,20 @@ struct Parameters {
     namespace bpo = boost::program_options;
     Parameters params;
     // define command line options
-    bpo::options_description arg_desc("mac_time_tracker");
+    bpo::options_description arg_desc(
+        "mac_time_tracker",
+        /* line length in help msg = */ bpo::options_description::m_default_line_length,
+        /* desc length in help msg = */ bpo::options_description::m_default_line_length * 9 / 10);
     unsigned int scan_period, track_period;
     bool help;
     arg_desc.add_options()
         // key, correspinding variable, description
         ("known-addr-csv",
          bpo::value(&params.known_addr_file)->default_value("known_addresses.csv"),
-         "path to input .csv file that contains known MAC addresses") //
+         "path to input .csv file that contains known MAC addresses\n"
+         "  format: <category>, <addr[0]>, <desc[0]>, ... , <addr[n]>, <desc[n]>\n"
+         "     ex.: John Doe, 00:11:22:33:44:55, PC, 66:77:88:99:AA:BB, Phone\n"
+         "          Jane Smith, CC:DD:EE:FF:00:11, Tablet") //
         ("tracked-addr-csv",
          bpo::value(&params.tracked_addr_file_fmt)
              ->default_value("tracked_addresses_%Y-%m-%d-%H-%M-%S.csv"),
