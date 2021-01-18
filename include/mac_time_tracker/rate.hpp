@@ -16,8 +16,8 @@ public:
   using Duration = Clock::duration;
 
 public:
-  template <typename OtherDuration>
-  Rate(const OtherDuration &period)
+  template <class Rep, class Ratio>
+  Rate(const std::chrono::duration<Rep, Ratio> &period)
       : period_(std::chrono::duration_cast<Duration>(period)), start_time_(Clock::now()) {}
 
   Duration period() const { return period_; }
