@@ -24,10 +24,11 @@ public:
   Set(const Base &base) : Base(base) {}
   Set(Base &&base) : Base(base) {}
 
-  static Set fromARPScan() {
+  static Set fromARPScan(const std::string &options = "--localnet") {
     FILE *const fp =
-        popen(R"(arp-scan --interface eth0 --localnet)"
-              R"( | grep '\([0-9a-fA-F]\{2\}[-:]\)\{5\}\([0-9a-fA-F]\{2\}\)' --only-matching)",
+        popen(("arp-scan " + options +
+               R"( | grep '\([0-9a-fA-F]\{2\}[-:]\)\{5\}\([0-9a-fA-F]\{2\}\)' --only-matching)")
+                  .c_str(),
               "r");
     if (!fp) {
       throw std::runtime_error("Set::fromARPScan(): popen");
