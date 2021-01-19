@@ -28,4 +28,5 @@ jobs:
           make
       - name: Run ctest
         run: |
+          cd $GITHUB_WORKSPACE/build
           ctest --extra-verbose --output-on-failure
