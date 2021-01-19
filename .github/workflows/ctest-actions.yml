@@ -9,10 +9,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-        sudo apt update
-        sudo apt install libboost-program-options-dev
-        mkdir build
-        cd build
-        cmake ..
-        make
-        ctest --extra-verbose --output-on-failure
+          sudo apt update
+          sudo apt install libboost-program-options-dev
+          mkdir build
+          cd build
+          cmake ..
+          make
+          ctest --extra-verbose --output-on-failure
