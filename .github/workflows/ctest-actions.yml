@@ -2,7 +2,7 @@ name: ctest-actions
 on:
   push:
     branches:
-      - actions
+      - main
 jobs:
   ctest:
     runs-on: ubuntu-18.04
