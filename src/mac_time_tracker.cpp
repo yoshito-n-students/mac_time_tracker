@@ -48,7 +48,8 @@ struct Parameters {
         ("tracked-addr-csv",
          bpo::value(&params.tracked_addr_file_fmt)
              ->default_value("tracked_addresses_%Y-%m-%d-%H-%M-%S.csv"),
-         "path to output .csv file that contains tracked MAC addresses") //
+         "path to output .csv file that contains tracked MAC addresses.\n"
+         "will be formatted by std::put_time().") //
         ("arp-scan-options", bpo::value(&params.arp_scan_options)->default_value("--localnet"),
          "options for arp-scan") //
         ("unknown-categoty", bpo::value(&params.unknown_category)->default_value("Unknown"),
