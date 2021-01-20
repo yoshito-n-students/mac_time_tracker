@@ -57,7 +57,7 @@ struct Parameters {
         ("scan-period", bpo::value(&scan_period)->default_value(300),
          "period of MAC address scan in seconds") //
         ("track-period", bpo::value(&track_period)->default_value(60),
-         "period to rotate output .cvs files in minutes")                          //
+         "period to rotate output .csv files in minutes")                          //
         ("verbose,v", bpo::bool_switch(&params.verbose), "verbose console output") //
         ("help,h", bpo::bool_switch(&help), "print help message");
     // parse command line args
