@@ -1,4 +1,4 @@
-name: Build and unit tests
+name: Build and test
 on:
   push:
     branches:
