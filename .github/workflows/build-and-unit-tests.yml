@@ -1,10 +1,10 @@
-name: ctest-actions
+name: Build and unit tests
 on:
   push:
     branches:
       - main
 jobs:
-  ctest:
+  build-and-unit-tests:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
