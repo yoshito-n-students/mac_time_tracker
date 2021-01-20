@@ -19,30 +19,27 @@ namespace mac_time_tracker {
 // Bimap of category name and MAC address with info of description
 // to represent known addresses
 
-struct CategoryBimapTrait {
-  struct CategoryTag {};
-  struct AddressTag {};
-  struct DescriptionTag {};
+struct CategoryBimapTraits {
+  struct Tags {
+    struct Category {};
+    struct Address {};
+    struct Description {};
+  };
 
   template <class Type, class Tag> using Tagged = boost::bimaps::tagged<Type, Tag>;
-  using CategoryCollection = boost::bimaps::multiset_of<Tagged<std::string, CategoryTag>>;
-  using AddressCollection = boost::bimaps::set_of<Tagged<Address, AddressTag>>;
-  using DescriptionInfo = boost::bimaps::with_info<Tagged<std::string, DescriptionTag>>;
+  using CategoryMultiset = boost::bimaps::multiset_of<Tagged<std::string, Tags::Category>>;
+  using AddressSet = boost::bimaps::set_of<Tagged<Address, Tags::Address>>;
+  using WithDescription = boost::bimaps::with_info<Tagged<std::string, Tags::Description>>;
 
-  using Base = boost::bimaps::bimap<CategoryCollection, AddressCollection, DescriptionInfo>;
+  using Base = boost::bimaps::bimap<CategoryMultiset, AddressSet, WithDescription>;
 };
 
-class CategoryBimap : public CategoryBimapTrait::Base {
+class CategoryBimap : public CategoryBimapTraits::Base {
 private:
-  using Base = CategoryBimapTrait::Base;
+  using Base = CategoryBimapTraits::Base;
 
 public:
-  // Tags
-  struct Tags {
-    using Category = CategoryBimapTrait::CategoryTag;
-    using Address = CategoryBimapTrait::AddressTag;
-    using Description = CategoryBimapTrait::DescriptionTag;
-  };
+  using Tags = CategoryBimapTraits::Tags;
 
 public:
   // Constructors

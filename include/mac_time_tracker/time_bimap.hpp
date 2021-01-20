@@ -21,30 +21,27 @@ namespace mac_time_tracker {
 // Bimap of timestamp and category name with info of address
 // to represent time history of address appearance
 
-struct TimeBimapTrait {
-  struct TimeTag {};
-  struct CategoryTag {};
-  struct AddressTag {};
+struct TimeBimapTraits {
+  struct Tags {
+    struct Time {};
+    struct Category {};
+    struct Address {};
+  };
 
   template <class Type, class Tag> using Tagged = boost::bimaps::tagged<Type, Tag>;
-  using TimeCollection = boost::bimaps::multiset_of<Tagged<Time, TimeTag>>;
-  using CategoryCollection = boost::bimaps::multiset_of<Tagged<std::string, CategoryTag>>;
-  using AddressInfo = boost::bimaps::with_info<Tagged<Address, AddressTag>>;
+  using TimeMultiset = boost::bimaps::multiset_of<Tagged<Time, Tags::Time>>;
+  using CategoryMultiset = boost::bimaps::multiset_of<Tagged<std::string, Tags::Category>>;
+  using WithAddress = boost::bimaps::with_info<Tagged<Address, Tags::Address>>;
 
-  using Base = boost::bimaps::bimap<TimeCollection, CategoryCollection, AddressInfo>;
+  using Base = boost::bimaps::bimap<TimeMultiset, CategoryMultiset, WithAddress>;
 };
 
-class TimeBimap : public TimeBimapTrait::Base {
+class TimeBimap : public TimeBimapTraits::Base {
 private:
-  using Base = TimeBimapTrait::Base;
+  using Base = TimeBimapTraits::Base;
 
 public:
-  // Tags
-  struct Tags {
-    using Time = TimeBimapTrait::TimeTag;
-    using Category = TimeBimapTrait::CategoryTag;
-    using Address = TimeBimapTrait::AddressTag;
-  };
+  using Tags = TimeBimapTraits::Tags;
 
 public:
   using Base::Base;
