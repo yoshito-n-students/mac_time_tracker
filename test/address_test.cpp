@@ -61,5 +61,4 @@ TEST(Address, fromStr) {
 TEST(Address, toStr) {
   const mtt::Address a = {0x00, 0xAA, 0x11, 0xBB, 0x22, 0xCC};
   ASSERT_STREQ(a.toStr().c_str(), "00:AA:11:BB:22:CC");
-  ASSERT_STREQ(a.toStr('-').c_str(), "00-AA-11-BB-22-CC");
 }
