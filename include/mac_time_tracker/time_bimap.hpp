@@ -2,6 +2,7 @@
 #define MAC_TIME_TRACKER_TIME_BIMAP_HPP
 
 #include <algorithm>
+#include <iostream>
 #include <set>
 #include <string>
 #include <utility> // for std::pair<>
@@ -12,6 +13,7 @@
 
 #include <mac_time_tracker/address.hpp>
 #include <mac_time_tracker/csv.hpp>
+#include <mac_time_tracker/io.hpp>
 #include <mac_time_tracker/set.hpp>
 #include <mac_time_tracker/time.hpp>
 
@@ -36,7 +38,7 @@ struct TimeBimapTraits {
   using Base = boost::bimaps::bimap<TimeMultiset, CategoryMultiset, WithAddress>;
 };
 
-class TimeBimap : public TimeBimapTraits::Base {
+class TimeBimap : public TimeBimapTraits::Base, public Writable {
 private:
   using Base = TimeBimapTraits::Base;
 
@@ -125,6 +127,9 @@ public:
     }
     return csv;
   }
+
+private:
+  virtual void write(std::ostream &os) const override { os << toCSV(); }
 };
 
 } // namespace mac_time_tracker
