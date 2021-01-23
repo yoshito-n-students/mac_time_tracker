@@ -21,6 +21,7 @@ public:
   CSV(const Base &base) : Base(base) {}
   CSV(Base &&base) : Base(base) {}
 
+private:
   // read CSV from the given string.
   // this implements a variant of CSV that
   //   - ends with an empty line or EOF
