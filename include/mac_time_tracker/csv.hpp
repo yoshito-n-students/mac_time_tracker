@@ -27,6 +27,7 @@ private:
   //   - ends with an empty line or EOF
   //   - allows different number of fields between lines
   virtual void read(std::istream &is) override {
+    clear();
     while (true) {
       // read a line from the stream
       std::string line;
