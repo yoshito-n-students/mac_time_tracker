@@ -41,6 +41,7 @@ add_executable(
     test/address_test.cpp
     test/category_bimap_test.cpp
     test/csv_test.cpp
+    test/io_test.cpp
     test/set_test.cpp
     test/time_bimap_test.cpp
     test/time_test.cpp
