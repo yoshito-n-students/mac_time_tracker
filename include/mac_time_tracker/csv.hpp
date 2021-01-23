@@ -1,17 +1,18 @@
 #ifndef MAC_TIME_TRACKER_CSV_HPP
 #define MAC_TIME_TRACKER_CSV_HPP
 
-#include <fstream>
-#include <stdexcept>
+#include <iostream>
 #include <string>
 #include <vector>
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/tokenizer.hpp>
 
+#include <mac_time_tracker/io.hpp>
+
 namespace mac_time_tracker {
 
-class CSV : public std::vector<std::vector<std::string>> {
+class CSV : public std::vector<std::vector<std::string>>, public Readable<CSV>, public Writable {
 private:
   using Base = std::vector<std::vector<std::string>>;
 
@@ -20,49 +21,47 @@ public:
   CSV(const Base &base) : Base(base) {}
   CSV(Base &&base) : Base(base) {}
 
-  // create an instance from a file
-  static CSV fromFile(const std::string &filename) {
-    std::ifstream ifs(filename);
-    if (!ifs) {
-      throw std::runtime_error("CSV::fromFile(): Cannot open '" + filename + "'");
-    }
-
-    CSV csv;
+  // read CSV from the given string.
+  // this implements a variant of CSV that
+  //   - ends with an empty line or EOF
+  //   - allows different number of fields between lines
+  virtual void read(std::istream &is) override {
     while (true) {
-      // read a line from the file
+      // read a line from the stream
       std::string line;
-      if (!std::getline(ifs, line)) {
+      std::getline(is, line);
+      if (line.empty()) {
         break;
       }
       // tokenize the line
       boost::tokenizer<boost::escaped_list_separator<char>> parser(line);
-      csv.emplace_back();
+      emplace_back();
       for (const std::string &token : parser) {
-        csv.back().push_back(token);
+        back().push_back(token);
       }
     }
-    return csv;
+    // this means successfully reached EOF but std::getline() set the fail flag
+    // because the last line was empty. cancel the fail flag (i.e. only the eof flag)
+    // because that is ok as a CSV format.
+    if (is.fail() && !is.bad() && is.eof()) {
+      is.clear(std::istream::eofbit);
+    }
   }
 
-  // dump data to a file
-  void toFile(const std::string &filename) const {
-    std::ofstream ofs(filename);
-    if (!ofs) {
-      throw std::runtime_error("CSV::toFile(): Cannot open '" + filename + "'");
-    }
-
+  // dump data to the given stream
+  virtual void write(std::ostream &os) const override {
     for (const std::vector<std::string> &line : *this) {
       for (std::size_t i = 0; i < line.size(); ++i) {
         if (i > 0) {
-          ofs << ",";
+          os << ",";
         }
         std::string escaped = line[i];
         boost::replace_all(escaped, R"(\)", R"(\\)"); // escape ch
         boost::replace_all(escaped, R"(")", R"(\")"); // quote
         boost::replace_all(escaped, "\n", R"(\n)");   // new line
-        ofs << "\"" << escaped << "\"";
+        os << "\"" << escaped << "\"";
       }
-      ofs << "\n";
+      os << "\n";
     }
   }
 };

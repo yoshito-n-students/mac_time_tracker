@@ -27,7 +27,7 @@ TEST(CSV, fromFile) {
                    "\n"
                    R"(Field 0,"Complex field 1\nwith \",\" and \"\\\"",Field 2)" // L5
                    "\n"
-                   "" // L6 (empty)
+                   " " // L6
                    "\n"
                    R"(,Field 1 following empty field 0,Field 2)" // L7
                    "\n"
@@ -66,7 +66,8 @@ TEST(CSV, fromFile) {
                R"(with "," and "\")",
                csv[5][1].c_str());
   // L6
-  ASSERT_EQ(0, csv[6].size());
+  ASSERT_EQ(1, csv[6].size());
+  ASSERT_STREQ(" ", csv[6][0].c_str());
   // L7
   ASSERT_EQ(3, csv[7].size());
   ASSERT_STREQ("", csv[7][0].c_str());
