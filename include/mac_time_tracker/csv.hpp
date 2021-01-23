@@ -22,7 +22,7 @@ public:
   CSV(Base &&base) : Base(base) {}
 
 private:
-  // read CSV from the given string.
+  // read CSV from the given stream.
   // this implements a variant of CSV that
   //   - ends with an empty line or EOF
   //   - allows different number of fields between lines
@@ -43,10 +43,10 @@ private:
       }
     }
     // this means successfully reached EOF but std::getline() set the fail flag
-    // because the last line was empty. cancel the fail flag (i.e. only the eof flag)
+    // because the last line was empty. cancel the fail flag (i.e. set only the eof flag)
     // because that is ok as a CSV format.
     if (is.fail() && !is.bad() && is.eof()) {
-      is.clear(std::istream::eofbit);
+      is.clear(/* new_state = */ std::istream::eofbit);
     }
   }
 
