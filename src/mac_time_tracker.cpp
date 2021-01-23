@@ -80,8 +80,8 @@ void printKnownAddresses(std::ostream &os, const std::string &filename,
   if (!view.empty()) {
     os << "Known addresses from '" << filename << "'" << std::endl;
     for (const CategoryView::value_type &entry : view) {
-      os << "    " << entry.get<Tags::Address>().toStr() << " ('" << entry.get<Tags::Category>()
-         << "' > '" << entry.get<Tags::Description>() << "')" << std::endl;
+      os << "    " << entry.get<Tags::Address>() << " ('" << entry.get<Tags::Category>() << "' > '"
+         << entry.get<Tags::Description>() << "')" << std::endl;
     }
   } else {
     os << "No known addresses from '" << filename << "'" << std::endl;
@@ -96,13 +96,13 @@ void printTrackedAddresses(std::ostream &os, const mtt::TimeBimap &tracked_addre
   const std::pair<TimeView::const_iterator, TimeView::const_iterator> range =
       view.equal_range(stamp);
   if (range.first != range.second) {
-    os << "Tracked addresses at " << stamp.toStr() << std::endl;
+    os << "Tracked addresses at " << stamp << std::endl;
     for (TimeView::const_iterator it = range.first; it != range.second; ++it) {
-      os << "    " << it->get<Tags::Address>().toStr() << " ('" << it->get<Tags::Category>() << "')"
+      os << "    " << it->get<Tags::Address>() << " ('" << it->get<Tags::Category>() << "')"
          << std::endl;
     }
   } else {
-    os << "No tracked addresses at " << stamp.toStr() << std::endl;
+    os << "No tracked addresses at " << stamp << std::endl;
   }
 }
 
@@ -137,8 +137,8 @@ int main(int argc, char *argv[]) {
     mtt::TimeBimap tracked_addrs;                       // storage
     if (params.verbose) {
       std::cout << "Tracking period #" << i << "\n"
-                << "     start: " << start_time.toStr() << "\n"
-                << "       end: " << end_time.toStr() << "\n"
+                << "     start: " << start_time << "\n"
+                << "       end: " << end_time << "\n"
                 << "    output: " << tracked_addr_file << std::endl;
     }
 
