@@ -27,6 +27,16 @@ public:
     (*this)[5] = v5;
   }
 
+  using Writable::toStr;
+  std::string toStr(const char sep) const {
+    char str[18];
+    // "%02X" -> 2 chars (2) of hex in uppercase (X), 0-padded (0)
+    std::sprintf(str, "%02X %02X %02X %02X %02X %02X", (*this)[0], (*this)[1], (*this)[2],
+                 (*this)[3], (*this)[4], (*this)[5]);
+    str[2] = str[5] = str[8] = str[11] = str[14] = sep;
+    return str;
+  }
+
 private:
   // read a string like "00:AA:11:bb:22:Cc" or "0a-1B-2c-3D-4e-5F" from the given stream
   virtual void read(std::istream &is) override {
@@ -44,13 +54,7 @@ private:
   }
 
   // write a string like "00:AA:11:BB:22:CC" to the given stream
-  virtual void write(std::ostream &os) const override {
-    char str[18];
-    // "%02X" -> 2 chars (2) of hex in uppercase (X), 0-padded (0)
-    std::sprintf(str, "%02X:%02X:%02X:%02X:%02X:%02X", (*this)[0], (*this)[1], (*this)[2],
-                 (*this)[3], (*this)[4], (*this)[5]);
-    os << str;
-  }
+  virtual void write(std::ostream &os) const override { os << toStr(':'); }
 };
 } // namespace mac_time_tracker
 
