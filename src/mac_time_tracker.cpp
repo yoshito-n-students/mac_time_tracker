@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Step 3: Save scan results
-        tracked_addrs.toCSV().toFile(tracked_addr_file);
+        tracked_addrs.toFile(tracked_addr_file);
       } catch (const std::exception &err) {
         std::cerr << err.what() << std::endl;
       }
