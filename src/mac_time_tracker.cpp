@@ -24,7 +24,7 @@ struct Parameters {
   std::chrono::minutes track_period;
   bool verbose;
 
-  // Det parameters using command line args.
+  // Get parameters from command line args.
   // If help is requested via command line, non-empty help_msg is also provided.
   static Parameters fromCommandLine(const int argc, const char *const argv[],
                                     std::string *const help_msg) {
@@ -35,7 +35,6 @@ struct Parameters {
         "mac_time_tracker",
         /* line length in help msg = */ bpo::options_description::m_default_line_length,
         /* desc length in help msg = */ bpo::options_description::m_default_line_length * 9 / 10);
-    unsigned int scan_period, track_period;
     bool help;
     arg_desc.add_options()
         // key, correspinding variable, description
@@ -54,9 +53,14 @@ struct Parameters {
          "options for arp-scan") //
         ("unknown-categoty", bpo::value(&params.unknown_category)->default_value("Unknown"),
          "category name for unknown addresses") //
-        ("scan-period", bpo::value(&scan_period)->default_value(300),
+        ("scan-period",
+         bpo::value<unsigned int>()->default_value(300)->notifier(
+             [&params](const unsigned int val) { params.scan_period = std::chrono::seconds(val); }),
          "period of MAC address scan in seconds") //
-        ("track-period", bpo::value(&track_period)->default_value(60),
+        ("track-period",
+         bpo::value<unsigned int>()->default_value(60)->notifier([&params](const unsigned int val) {
+           params.track_period = std::chrono::minutes(val);
+         }),
          "period to rotate output .csv files in minutes")                          //
         ("verbose,v", bpo::bool_switch(&params.verbose), "verbose console output") //
         ("help,h", bpo::bool_switch(&help), "print help message");
@@ -65,8 +69,6 @@ struct Parameters {
     bpo::store(bpo::parse_command_line(argc, argv, arg_desc), arg_map);
     bpo::notify(arg_map);
     // return results
-    params.scan_period = std::chrono::seconds(scan_period);
-    params.track_period = std::chrono::minutes(track_period);
     *help_msg = help ? boost::lexical_cast<std::string>(arg_desc) : std::string("");
     return params;
   }
