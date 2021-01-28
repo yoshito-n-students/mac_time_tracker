@@ -17,7 +17,7 @@ jobs:
       - name: System update
         run: |
           apt update
-          apt upgrade
+          apt --yes upgrade
       - uses: actions/checkout@v2
         with:
           ref: main
