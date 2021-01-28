@@ -30,28 +30,36 @@ jobs:
       - name: Install dependencies
         run: |
           apt update
-          apt --yes install build-essential cmake libboost-program-options-dev libgtest-dev
+          apt --yes install build-essential cmake libboost-program-options-dev
+      - name: Checkout gtest
+        uses: actions/checkout@v2
+        with:
+          repository: google/googletest
+          ref: release-1.10.0
+          path: gtest
       - name: Build gtest
         run: |
-          cd /usr/src/gtest
+          cd gtest
           mkdir build
           cd build
           cmake ..
           make
           make install
-      - name: Checkout repo
+      - name: Checkout mac_time_tracker
         uses: actions/checkout@v2
         with:
           ref: main
-      - name: Build repo
+          path: mac_time_tracker
+      - name: Build mac_time_tracker
         run: |
+          cd mac_timer_tracker
           mkdir build
           cd build
           cmake ..
           make
       - name: Run ctest
         run: |
-          cd build
+          cd mac_time_tracker/build
           ctest --extra-verbose --output-on-failure
         env:
           GTEST_COLOR: 1
