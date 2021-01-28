@@ -22,6 +22,7 @@ jobs:
           sudo make install
       - name: Build repo
         run: |
+          ls
           mkdir build
           cd build
           cmake ..
