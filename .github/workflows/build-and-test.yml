@@ -6,7 +6,12 @@ on:
       - actions
 jobs:
   build-and-test:
-    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        container-tag: [16.04, 18.04, 20.04]
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:${{ matrix.container-tag }}
     steps:
       - uses: actions/checkout@v2
         with:
