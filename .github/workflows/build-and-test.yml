@@ -10,8 +10,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - ubuntu-tag: '16.04'
-            init-tz: false
           - ubuntu-tag: '18.04'
             init-tz: false
           - ubuntu-tag: '20.04'
@@ -39,7 +37,7 @@ jobs:
           repository: google/googletest
           ref: release-1.10.0
           path: gtest
-      - name: Build gtest
+      - name: Build and install gtest
         run: |
           cd gtest
           mkdir build
