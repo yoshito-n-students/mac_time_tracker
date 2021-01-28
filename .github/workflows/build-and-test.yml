@@ -10,6 +10,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - ubuntu-tag: '16.04'
+            init-tz: false
           - ubuntu-tag: '18.04'
             init-tz: false
           - ubuntu-tag: '20.04'
