@@ -37,6 +37,7 @@ jobs:
           mkdir build
           cd build
           cmake ..
+          make
           make install
       - name: Checkout repo
         uses: actions/checkout@v2
