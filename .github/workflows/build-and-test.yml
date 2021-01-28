@@ -9,18 +9,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ubuntu-tag: ['16.04', '18.04', '20.04']
+        include:
+          - ubuntu-tag: '18.04'
+            init-tz: false
+          - ubuntu-tag: '20.04'
+            init-tz: true
     runs-on: ubuntu-latest
     container:
       image: ubuntu:${{ matrix.ubuntu-tag }}
     steps:
+      - name: Init timezone
+        if: ${{ matrix.init-tz }}
+        run: |
+          echo 'Etc/UTC' > /etc/timezone
+          ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime
       - name: System update
         run: |
           apt update
           apt --yes upgrade
-      - uses: actions/checkout@v2
-        with:
-          ref: main
       - name: Install dependencies
         run: |
           apt update
@@ -32,9 +38,12 @@ jobs:
           cd build
           cmake ..
           make install
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          ref: main
       - name: Build repo
         run: |
-          ls
           mkdir build
           cd build
           cmake ..
