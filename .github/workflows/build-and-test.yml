@@ -8,7 +8,7 @@ jobs:
   build-and-test:
     strategy:
       matrix:
-        container-tag: [16.04, 18.04, 20.04]
+        container-tag: ['16.04', '18.04', '20.04']
     runs-on: ubuntu-latest
     container:
       image: ubuntu:${{ matrix.container-tag }}
@@ -18,15 +18,15 @@ jobs:
           ref: main
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install cmake libboost-program-options-dev libgtest-dev
+          apt update
+          apt --yes install cmake libboost-program-options-dev libgtest-dev
       - name: Build gtest
         run: |
           cd /usr/src/gtest
-          sudo mkdir build
+          mkdir build
           cd build
-          sudo cmake ..
-          sudo make install
+          cmake ..
+          make install
       - name: Build repo
         run: |
           ls
