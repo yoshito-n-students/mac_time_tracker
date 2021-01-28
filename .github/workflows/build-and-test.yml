@@ -7,19 +7,24 @@ on:
 jobs:
   build-and-test:
     strategy:
+      fail-fast: false
       matrix:
-        container-tag: ['16.04', '18.04', '20.04']
+        ubuntu-tag: ['16.04', '18.04', '20.04']
     runs-on: ubuntu-latest
     container:
-      image: ubuntu:${{ matrix.container-tag }}
+      image: ubuntu:${{ matrix.ubuntu-tag }}
     steps:
+      - name: System update
+        run: |
+          apt update
+          apt upgrade
       - uses: actions/checkout@v2
         with:
           ref: main
       - name: Install dependencies
         run: |
           apt update
-          apt --yes install cmake libboost-program-options-dev libgtest-dev
+          apt --yes install build-essential cmake libboost-program-options-dev libgtest-dev
       - name: Build gtest
         run: |
           cd /usr/src/gtest
