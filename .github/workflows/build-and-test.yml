@@ -22,14 +22,13 @@ jobs:
           sudo make install
       - name: Build repo
         run: |
-          cd $GITHUB_WORKSPACE
           mkdir build
           cd build
           cmake ..
           make
       - name: Run ctest
         run: |
-          cd $GITHUB_WORKSPACE/build
+          cd build
           ctest --extra-verbose --output-on-failure
         env:
           GTEST_COLOR: 1
