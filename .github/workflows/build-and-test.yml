@@ -54,7 +54,7 @@ jobs:
           path: mac_time_tracker
       - name: Build mac_time_tracker
         run: |
-          cd mac_timer_tracker
+          cd mac_time_tracker
           mkdir build
           cd build
           cmake ..
