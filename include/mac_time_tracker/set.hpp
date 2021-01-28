@@ -2,6 +2,7 @@
 #define MAC_TIME_TRACKER_SET_HPP
 
 #include <cstdio>
+#include <memory>
 #include <set>
 #include <stdexcept>
 
@@ -25,11 +26,12 @@ public:
   Set(Base &&base) : Base(base) {}
 
   static Set fromARPScan(const std::string &options = "--localnet") {
-    FILE *const fp =
+    const std::unique_ptr<FILE, int (*)(FILE *)> fp(
         popen(("arp-scan " + options +
                R"( | grep '\([0-9a-fA-F]\{2\}[-:]\)\{5\}\([0-9a-fA-F]\{2\}\)' --only-matching)")
                   .c_str(),
-              "r");
+              "r"),
+        pclose);
     if (!fp) {
       throw std::runtime_error("Set::fromARPScan(): popen");
     }
@@ -37,13 +39,11 @@ public:
     Set set;
     while (true) {
       char line[256];
-      if (!std::fgets(line, 256, fp)) {
+      if (!std::fgets(line, 256, fp.get())) {
         break; // end of file
       }
       set.insert(Address::fromStr(line));
     }
-
-    pclose(fp);
 
     return set;
   }
