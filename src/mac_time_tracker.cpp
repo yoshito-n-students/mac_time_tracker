@@ -123,28 +123,25 @@ int main(int argc, char *argv[]) {
 
   // Main loop (never returns)
   for (int i = 0;; ++i) {
-    // Step 1: Load known addresses
+    // Step 1: Load known addresses and a template of tracked addresses .html
     mtt::AddressMap known_addrs;
+    std::string tracked_addrs_html_in;
     try {
       known_addrs = mtt::AddressMap::fromFile(params.known_addr_csv);
+      if (params.verbose) {
+        printKnownAddresses(std::cout, params.known_addr_csv, known_addrs);
+      }
+
+      std::ifstream ifs(params.tracked_addr_html_in);
+      if (!ifs) {
+        throw std::runtime_error("Cannot open '" + params.tracked_addr_html_in + "' to read");
+      }
+      tracked_addrs_html_in.assign(std::istreambuf_iterator<char>(ifs),
+                                   std::istreambuf_iterator<char>());
     } catch (const std::exception &err) {
       std::cerr << err.what() << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
-    if (params.verbose) {
-      printKnownAddresses(std::cout, params.known_addr_csv, known_addrs);
-    }
-
-    // Step2: Load a template of tracked addresses .html
-    std::string tracked_addrs_html_in;
-    {
-      std::ifstream ifs(params.tracked_addr_html_in);
-      if (ifs) {
-        tracked_addrs_html_in.assign(std::istreambuf_iterator<char>(ifs),
-                                     std::istreambuf_iterator<char>());
-      } else {
-        throw std::runtime_error("Cannot open '" + params.tracked_addr_html_in + "' to read");
-      }
+      continue;
     }
 
     // Constants and storage for this tracking period
@@ -167,7 +164,7 @@ int main(int argc, char *argv[]) {
     for (mtt::Time present_time = mtt::Time::now(); present_time < end_time;
          present_time = mtt::Time::now()) {
       try {
-        // Step 3: Scan and track addresses in network by matching them to the known addresses
+        // Step 2: Scan and track addresses in network by matching them to the known addresses
         const mtt::Set present_addrs = mtt::Set::fromARPScan(params.arp_scan_options);
         for (const mtt::Address &addr : present_addrs) {
           const mtt::AddressMap::const_iterator it = known_addrs.find(addr);
@@ -180,14 +177,14 @@ int main(int argc, char *argv[]) {
           printTrackedAddresses(std::cout, tracked_addrs, present_time);
         }
 
-        // Step 4: Save scan results
+        // Step 3: Save scan results
         tracked_addrs.toFile(tracked_addr_csv);
         tracked_addrs.toHTML(tracked_addrs_html, tracked_addrs_html_in, params.scan_period);
       } catch (const std::exception &err) {
         std::cerr << err.what() << std::endl;
       }
 
-      // Step 5: Sleep until the next scan
+      // Step 4: Sleep until the next scan
       rate.sleep();
     }
   }
