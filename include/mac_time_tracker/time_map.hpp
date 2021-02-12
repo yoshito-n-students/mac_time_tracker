@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -12,6 +13,8 @@
 #include <mac_time_tracker/csv.hpp>
 #include <mac_time_tracker/io.hpp>
 #include <mac_time_tracker/time.hpp>
+
+#include <boost/algorithm/string/replace.hpp>
 
 namespace mac_time_tracker {
 
@@ -59,27 +62,31 @@ public:
       throw std::runtime_error("TimeMap::toHTML(): Cannot open '" + filename + "' to write");
     }
 
-    static const std::string keyword = "@DATA_ENTRIES@";
-    const std::size_t pos = template_str.find(keyword);
-    if (pos == std::string::npos) {
-      // no keyword in template
-      ofs << template_str;
-      return;
+    // replace '@DATE@' to last update date
+    std::string str = template_str;
+    boost::replace_all(str, "@DATE@", Time::now().toStr());
+
+    // replace '@DATA_ENTRIES@' to data
+    {
+      std::ostringstream entries_str;
+      for (const value_type &entry : *this) {
+        namespace sc = std::chrono;
+        entries_str << "['" << entry.second.category << "', "
+                    << "new Date("
+                    << sc::duration_cast<sc::milliseconds>(entry.first.time_since_epoch()).count()
+                    << "), "
+                    << "new Date("
+                    << sc::duration_cast<sc::milliseconds>(
+                           (entry.first + duration).time_since_epoch())
+                           .count()
+                    << ")], "
+                    << "// " << duration.count() << " seconds from " << entry.first << std::endl;
+      }
+      boost::replace_all(str, "@DATA_ENTRIES@", entries_str.str());
     }
 
-    ofs << template_str.substr(0, pos);
-    for (const value_type &entry : *this) {
-      namespace sc = std::chrono;
-      char line[256];
-      std::sprintf(
-          line, "['%s', new Date(%ld), new Date(%ld)], // %ld seconds from %s\n",
-          entry.second.category.c_str(),
-          sc::duration_cast<sc::milliseconds>(entry.first.time_since_epoch()).count(),
-          sc::duration_cast<sc::milliseconds>((entry.first + duration).time_since_epoch()).count(),
-          duration.count(), entry.first.toStr().c_str());
-      ofs << line;
-    }
-    ofs << template_str.substr(pos + keyword.size());
+    // finally write to the file
+    ofs << str;
   }
 
 private:
