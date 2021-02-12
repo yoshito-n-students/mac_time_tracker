@@ -39,7 +39,7 @@ add_executable(
     unit_tests
     test/main.cpp
     test/address_test.cpp
-    test/category_bimap_test.cpp
+    test/address_map_test.cpp
     test/csv_test.cpp
     test/io_test.cpp
     test/set_test.cpp

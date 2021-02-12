@@ -10,7 +10,7 @@
 #include <boost/program_options/variables_map.hpp>  // for variables_map, store() and notify()
 
 #include <mac_time_tracker/address.hpp>
-#include <mac_time_tracker/category_bimap.hpp>
+#include <mac_time_tracker/address_map.hpp>
 #include <mac_time_tracker/rate.hpp>
 #include <mac_time_tracker/set.hpp>
 #include <mac_time_tracker/time.hpp>
@@ -41,9 +41,10 @@ struct Parameters {
         ("known-addr-csv",
          bpo::value(&params.known_addr_file)->default_value("known_addresses.csv"),
          "path to input .csv file that contains known MAC addresses\n"
-         "  format: <category>, <addr[0]>, <desc[0]>, ... , <addr[n]>, <desc[n]>\n"
-         "     ex.: John Doe, 00:11:22:33:44:55, PC, 66:77:88:99:AA:BB, Phone\n"
-         "          Jane Smith, CC:DD:EE:FF:00:11, Tablet") //
+         "  format: <addr>, <category>, <description>\n"
+         "     ex.: 00:11:22:33:44:55, Jhon Doe, PC\n"
+         "          66:77:88:99:AA:BB, Jhon Doe, Phone\n"
+         "          CC:DD:EE:FF:00:11, Jane Smith, Tablet") //
         ("tracked-addr-csv",
          bpo::value(&params.tracked_addr_file_fmt)
              ->default_value("tracked_addresses_%Y-%m-%d-%H-%M-%S.csv"),
@@ -75,15 +76,12 @@ struct Parameters {
 };
 
 void printKnownAddresses(std::ostream &os, const std::string &filename,
-                         const mtt::CategoryBimap &known_addrs) {
-  using Tags = mtt::CategoryBimap::Tags;
-  using CategoryView = mtt::CategoryBimap::map_by<Tags::Category>::type;
-  const CategoryView &view = known_addrs.by<Tags::Category>();
-  if (!view.empty()) {
+                         const mtt::AddressMap &known_addrs) {
+  if (!known_addrs.empty()) {
     os << "Known addresses from '" << filename << "'" << std::endl;
-    for (const CategoryView::value_type &entry : view) {
-      os << "    " << entry.get<Tags::Address>() << " ('" << entry.get<Tags::Category>() << "' > '"
-         << entry.get<Tags::Description>() << "')" << std::endl;
+    for (const mtt::AddressMap::value_type &entry : known_addrs) {
+      os << "    " << entry.first << " ('" << entry.second.category << "' > '"
+         << entry.second.description << "')" << std::endl;
     }
   } else {
     os << "No known addresses from '" << filename << "'" << std::endl;
@@ -120,9 +118,9 @@ int main(int argc, char *argv[]) {
   // Main loop (never returns)
   for (int i = 0;; ++i) {
     // Step 1: Load known addresses
-    mtt::CategoryBimap known_addrs;
+    mtt::AddressMap known_addrs;
     try {
-      known_addrs = mtt::CategoryBimap::fromFile(params.known_addr_file);
+      known_addrs = mtt::AddressMap::fromFile(params.known_addr_file);
     } catch (const std::exception &err) {
       std::cerr << err.what() << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -152,12 +150,9 @@ int main(int argc, char *argv[]) {
         // Step 2: Scan and track addresses in network by matching them to the known addresses
         const mtt::Set present_addrs = mtt::Set::fromARPScan(params.arp_scan_options);
         for (const mtt::Address &addr : present_addrs) {
-          using Tags = mtt::CategoryBimap::Tags;
-          using AddressView = mtt::CategoryBimap::map_by<Tags::Address>::type;
-          const AddressView &view = known_addrs.by<Tags::Address>();
-          const AddressView::const_iterator it = view.find(addr);
-          if (it != view.end()) {
-            tracked_addrs.insert({present_time, it->get<Tags::Category>(), addr});
+          const mtt::AddressMap::const_iterator it = known_addrs.find(addr);
+          if (it != known_addrs.end()) {
+            tracked_addrs.insert({present_time, it->second.category, addr});
           } else {
             tracked_addrs.insert({present_time, params.unknown_category, addr});
           }
