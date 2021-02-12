@@ -1,8 +1,10 @@
 #ifndef MAC_TIME_TRACKER_TIME_MAP_HPP
 #define MAC_TIME_TRACKER_TIME_MAP_HPP
 
+#include <fstream>
 #include <iostream>
 #include <map>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -48,6 +50,36 @@ public:
                                              entry.second.category, entry.second.description});
     }
     return csv;
+  }
+
+  void toHTML(const std::string &filename, const std::string &template_str,
+              const std::chrono::seconds &duration) const {
+    std::ofstream ofs(filename);
+    if (!ofs) {
+      throw std::runtime_error("TimeMap::toHTML(): Cannot open '" + filename + "' to write");
+    }
+
+    static const std::string keyword = "@DATA_ENTRIES@";
+    const std::size_t pos = template_str.find(keyword);
+    if (pos == std::string::npos) {
+      // no keyword in template
+      ofs << template_str;
+      return;
+    }
+
+    ofs << template_str.substr(0, pos);
+    for (const value_type &entry : *this) {
+      namespace sc = std::chrono;
+      char line[256];
+      std::sprintf(
+          line, "['%s', new Date(%ld), new Date(%ld)], // %ld seconds from %s\n",
+          entry.second.category.c_str(),
+          sc::duration_cast<sc::milliseconds>(entry.first.time_since_epoch()).count(),
+          sc::duration_cast<sc::milliseconds>((entry.first + duration).time_since_epoch()).count(),
+          duration.count(), entry.first.toStr().c_str());
+      ofs << line;
+    }
+    ofs << template_str.substr(pos + keyword.size());
   }
 
 private:
