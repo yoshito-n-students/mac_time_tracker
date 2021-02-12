@@ -46,11 +46,8 @@ public:
   CSV toCSV() const {
     CSV csv;
     for (const value_type &entry : *this) {
-      csv.emplace_back();
-      csv.back().emplace_back(entry.first.toStr());
-      csv.back().emplace_back(entry.second.address.toStr());
-      csv.back().emplace_back(entry.second.category);
-      csv.back().emplace_back(entry.second.description);
+      csv.push_back(std::vector<std::string>{entry.first.toStr(), entry.second.address.toStr(),
+                                             entry.second.category, entry.second.description});
     }
     return csv;
   }
