@@ -36,11 +36,8 @@ private:
         break;
       }
       // tokenize the line
-      boost::tokenizer<boost::escaped_list_separator<char>> parser(line);
-      emplace_back();
-      for (const std::string &token : parser) {
-        back().push_back(token);
-      }
+      boost::tokenizer<boost::escaped_list_separator<char>> tokens(line);
+      emplace_back(tokens.begin(), tokens.end());
     }
     // this means successfully reached EOF but std::getline() set the fail flag
     // because the last line was empty. cancel the fail flag (i.e. set only the eof flag)
