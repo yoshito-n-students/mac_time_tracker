@@ -43,10 +43,12 @@ public:
   TimeMap(Base &&base) : Base(base) {}
 
   // make a CSV, each line is '<timestamp>, <address>, <category>, <description>'
-  CSV toCSV() const {
+  CSV toCSV(const std::string &time_fmt = Time::defaultFormat(),
+            const char addr_sep = Address::defaultSeparator()) const {
     CSV csv;
     for (const value_type &entry : *this) {
-      csv.push_back(std::vector<std::string>{entry.first.toStr(), entry.second.address.toStr(),
+      csv.push_back(std::vector<std::string>{entry.first.toStr(time_fmt),
+                                             entry.second.address.toStr(addr_sep),
                                              entry.second.category, entry.second.description});
     }
     return csv;

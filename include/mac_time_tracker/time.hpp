@@ -35,11 +35,13 @@ public:
     return boost::lexical_cast<std::string>(std::put_time(std::localtime(&t), fmt.c_str()));
   }
 
-private:
-  virtual void write(std::ostream &os) const override {
-    // use a format like "Y-M-D H:M:S", which is based on ISO 8601
-    os << toStr("%F %T");
+  static std::string defaultFormat() {
+    // a format like "Y-M-D H:M:S", which is based on ISO 8601
+    return "%F %T";
   }
+
+private:
+  virtual void write(std::ostream &os) const override { os << toStr(defaultFormat()); }
 };
 
 } // namespace mac_time_tracker

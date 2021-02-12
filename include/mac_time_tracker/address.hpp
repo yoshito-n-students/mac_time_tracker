@@ -37,6 +37,8 @@ public:
     return str;
   }
 
+  static char defaultSeparator() { return ':'; }
+
 private:
   // read a string like "00:AA:11:bb:22:Cc" or "0a-1B-2c-3D-4e-5F" from the given stream
   virtual void read(std::istream &is) override {
@@ -54,7 +56,7 @@ private:
   }
 
   // write a string like "00:AA:11:BB:22:CC" to the given stream
-  virtual void write(std::ostream &os) const override { os << toStr(':'); }
+  virtual void write(std::ostream &os) const override { os << toStr(defaultSeparator()); }
 };
 } // namespace mac_time_tracker
 
