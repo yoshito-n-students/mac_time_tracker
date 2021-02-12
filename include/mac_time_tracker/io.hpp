@@ -28,7 +28,7 @@ public:
   static T fromFile(const std::string &filename) {
     std::ifstream ifs(filename);
     if (!ifs) {
-      throw std::runtime_error("Readable::fromFile(): Cannot open '" + filename + "'");
+      throw std::runtime_error("Readable::fromFile(): Cannot open '" + filename + "' to read");
     }
     T val;
     ifs >> val;
@@ -51,7 +51,7 @@ public:
 
   std::string toStr() const {
     std::ostringstream oss;
-    write(oss);
+    oss << *this;
     if (!oss) {
       throw std::runtime_error("Writable::toStr(): Cannot write to a string");
     }
@@ -61,9 +61,9 @@ public:
   void toFile(const std::string &filename) const {
     std::ofstream ofs(filename);
     if (!ofs) {
-      throw std::runtime_error("Writable::toFile(): Cannot open '" + filename + "'");
+      throw std::runtime_error("Writable::toFile(): Cannot open '" + filename + "' to write");
     }
-    write(ofs);
+    ofs << *this;
     if (!ofs) {
       throw std::runtime_error("Writable::toFile(): Cannot write to '" + filename + "'");
     }
