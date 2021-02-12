@@ -1,18 +1,14 @@
 #ifndef MAC_TIME_TRACKER_TIME_MAP_HPP
 #define MAC_TIME_TRACKER_TIME_MAP_HPP
 
-#include <algorithm>
 #include <iostream>
 #include <map>
-#include <set>
 #include <string>
-#include <utility> // for std::pair<>
 #include <vector>
 
 #include <mac_time_tracker/address.hpp>
 #include <mac_time_tracker/csv.hpp>
 #include <mac_time_tracker/io.hpp>
-#include <mac_time_tracker/set.hpp>
 #include <mac_time_tracker/time.hpp>
 
 namespace mac_time_tracker {
