@@ -26,7 +26,7 @@ public:
 
   void sleep() {
     // A faster version of
-    //   # const Time now = Time::clock::now();
+    //   # const Time now = Clock::now();
     //   # while(start_time_ < now){
     //   #   start_time_ += period_;
     //   # }
