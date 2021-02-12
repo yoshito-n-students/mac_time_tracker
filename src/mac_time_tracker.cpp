@@ -14,7 +14,7 @@
 #include <mac_time_tracker/rate.hpp>
 #include <mac_time_tracker/set.hpp>
 #include <mac_time_tracker/time.hpp>
-#include <mac_time_tracker/time_bimap.hpp>
+#include <mac_time_tracker/time_map.hpp>
 
 namespace mtt = mac_time_tracker;
 
@@ -88,18 +88,15 @@ void printKnownAddresses(std::ostream &os, const std::string &filename,
   }
 }
 
-void printTrackedAddresses(std::ostream &os, const mtt::TimeBimap &tracked_addresses,
+void printTrackedAddresses(std::ostream &os, const mtt::TimeMap &tracked_addrs,
                            const mtt::Time &stamp) {
-  using Tags = mtt::TimeBimap::Tags;
-  using TimeView = mtt::TimeBimap::map_by<Tags::Time>::type;
-  const TimeView &view = tracked_addresses.by<Tags::Time>();
-  const std::pair<TimeView::const_iterator, TimeView::const_iterator> range =
-      view.equal_range(stamp);
+  const std::pair<mtt::TimeMap::const_iterator, mtt::TimeMap::const_iterator> range =
+      tracked_addrs.equal_range(stamp);
   if (range.first != range.second) {
     os << "Tracked addresses at " << stamp << std::endl;
-    for (TimeView::const_iterator it = range.first; it != range.second; ++it) {
-      os << "    " << it->get<Tags::Address>() << " ('" << it->get<Tags::Category>() << "')"
-         << std::endl;
+    for (mtt::TimeMap::const_iterator it = range.first; it != range.second; ++it) {
+      os << "    " << it->second.address << " ('" << it->second.category << "' > '"
+         << it->second.description << "')" << std::endl;
     }
   } else {
     os << "No tracked addresses at " << stamp << std::endl;
@@ -134,7 +131,7 @@ int main(int argc, char *argv[]) {
     const mtt::Time end_time = start_time + params.track_period; // end time
     const std::string tracked_addr_file =
         start_time.toStr(params.tracked_addr_file_fmt); // output filename
-    mtt::TimeBimap tracked_addrs;                       // storage
+    mtt::TimeMap tracked_addrs;                         // storage
     if (params.verbose) {
       std::cout << "Tracking period #" << i << "\n"
                 << "     start: " << start_time << "\n"
@@ -152,9 +149,10 @@ int main(int argc, char *argv[]) {
         for (const mtt::Address &addr : present_addrs) {
           const mtt::AddressMap::const_iterator it = known_addrs.find(addr);
           if (it != known_addrs.end()) {
-            tracked_addrs.insert({present_time, it->second.category, addr});
+            tracked_addrs.insert(
+                {present_time, {addr, it->second.category, it->second.description}});
           } else {
-            tracked_addrs.insert({present_time, params.unknown_category, addr});
+            tracked_addrs.insert({present_time, {addr, params.unknown_category, ""}});
           }
         }
         if (params.verbose) {
