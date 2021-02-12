@@ -1,0 +1,68 @@
+<html>
+
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', { 'packages': ['controls', 'timeline'] });
+    window.onload = function () {
+      draw();
+    };
+    window.onresize = function () {
+      draw();
+    };
+
+    function draw() {
+      var data = new google.visualization.arrayToDataTable([
+        ['Name', 'Start', 'End'],
+        // ['Jhon', new Date(2021, 2, 7, 10, 00), new Date(2021, 2, 7, 10, 5)],
+        // ...
+        @DATA_ENTRIES@
+      ]);
+
+      var control = new google.visualization.ControlWrapper({
+        controlType: 'ChartRangeFilter',
+        containerId: 'control',
+        options: {
+          filterColumnIndex: 1,
+          ui: {
+            chartType: 'ScatterChart',
+            chartOptions: {
+              height: 100,
+              chartArea: {
+                left: '2%', 
+                width: '96%'
+              }
+            },
+            chartView: {
+              columns: [1, { calc: function () { return 0; }, type: 'number' }]
+            }
+          }
+        }
+      });
+
+      var chart = new google.visualization.ChartWrapper({
+        chartType: 'Timeline',
+        containerId: 'chart',
+        options: {
+          height: (data.getNumberOfRows() + 1) * 13
+        }
+      });
+
+      var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard'));
+      dashboard.bind(control, chart);
+      dashboard.draw(data);
+    }
+  </script>
+</head>
+
+<body>
+  <div id="dashboard">
+    <b>Start date filter</b>
+    <div id="control"></div>
+    <br />
+    <b>Timeline</b>
+    <div id="chart"></div>
+  </div>
+</body>
+
+</html>
