@@ -43,18 +43,21 @@ public:
   // Create an instance from a CSV, each line is '<address>, <category>, <description>'
   static AddressMap fromCSV(const CSV &csv) {
     AddressMap map;
-    for (const std::vector<std::string> &line : csv) {
+    for (std::size_t i = 0; i < csv.size(); ++i) {
+      const std::vector<std::string> &line = csv[i];
       if (line.size() != 3) {
-        // TODO: print line number
-        throw std::runtime_error("AddressMap::fromCSV(): Invalid number of elements (" +
-                                 boost::lexical_cast<std::string>(line.size()) + ")");
+        throw std::runtime_error(
+            "AddressMap::fromCSV(): Each line must have 3 elements but the line " +
+            boost::lexical_cast<std::string>(i) + " has " +
+            boost::lexical_cast<std::string>(line.size()));
       }
       // boost::trim_copy() removes leading and trailing spaces
       const Address addr = Address::fromStr(boost::trim_copy(line[0]));
       const std::string category = boost::trim_copy(line[1]), desc = boost::trim_copy(line[2]);
       if (!map.insert({addr, {category, desc}}).second) {
         throw std::runtime_error("AddressMap::fromCSV(): Cannot insert an item {'" + addr.toStr() +
-                                 "', " + category + ", '" + desc + "'}. Non-unique MAC address?");
+                                 "', {'" + category + "', '" + desc +
+                                 "'}}. Non-unique MAC address?");
       }
     }
     return map;
