@@ -25,7 +25,7 @@ public:
   Set(const Base &base) : Base(base) {}
   Set(Base &&base) : Base(base) {}
 
-  static Set fromARPScan(const std::string &options = "--localnet") {
+  static Set fromARPScan(const std::string &options = defaultOptions()) {
     const std::unique_ptr<FILE, int (*)(FILE *)> fp(
         popen(("arp-scan " + options +
                R"( | grep '\([0-9a-fA-F]\{2\}[-:]\)\{5\}\([0-9a-fA-F]\{2\}\)' --only-matching)")
@@ -47,6 +47,8 @@ public:
 
     return set;
   }
+
+  static std::string defaultOptions() { return "--localnet"; }
 };
 } // namespace mac_time_tracker
 

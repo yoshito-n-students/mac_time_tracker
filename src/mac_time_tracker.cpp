@@ -60,7 +60,8 @@ struct Parameters {
          bpo::value(&params.tracked_addr_html_fmt)
              ->default_value("tracked_addresses_%Y-%m-%d-%H-%M-%S.html"),
          "path to output .html file. will be formatted by std::put_time().") //
-        ("arp-scan-options", bpo::value(&params.arp_scan_options)->default_value("--localnet"),
+        ("arp-scan-options",
+         bpo::value(&params.arp_scan_options)->default_value(mtt::Set::defaultOptions()),
          "options for arp-scan") //
         ("scan-period",
          bpo::value<unsigned int>()->default_value(300)->notifier(
