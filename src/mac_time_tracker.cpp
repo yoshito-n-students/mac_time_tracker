@@ -79,9 +79,10 @@ struct Parameters {
              [&params](const unsigned int val) { params.scan_period = std::chrono::minutes(val); }),
          "period of MAC address scan in minutes") //
         ("track-period",
-         bpo::value<unsigned int>()->default_value(60)->notifier([&params](const unsigned int val) {
-           params.track_period = std::chrono::minutes(val);
-         }),
+         bpo::value<unsigned int>()->default_value(60 * 24)->notifier(
+             [&params](const unsigned int val) {
+               params.track_period = std::chrono::minutes(val);
+             }),
          "period to rotate output .csv and .html files in minutes")                //
         ("verbose,v", bpo::bool_switch(&params.verbose), "verbose console output") //
         ("help,h", bpo::bool_switch(&help), "print help message");
