@@ -1,6 +1,7 @@
 #ifndef MAC_TIME_TRACKER_TIME_MAP_HPP
 #define MAC_TIME_TRACKER_TIME_MAP_HPP
 
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -56,7 +57,7 @@ public:
   }
 
   void toHTML(const std::string &filename, const std::string &template_str,
-              const std::chrono::seconds &duration) const {
+              const std::chrono::minutes &duration) const {
     std::ofstream ofs(filename);
     if (!ofs) {
       throw std::runtime_error("TimeMap::toHTML(): Cannot open '" + filename + "' to write");
@@ -85,7 +86,7 @@ public:
                            (entry->first + duration).time_since_epoch())
                            .count()
                     << ")] "
-                    << "/* " << duration.count() << " seconds from " << entry->first << " */";
+                    << "/* " << duration.count() << " minutes from " << entry->first << " */";
       }
       boost::replace_all(str, "@DATA_ENTRIES@", entries_str.str());
     }

@@ -28,8 +28,7 @@ struct Parameters {
   std::string known_addr_csv, tracked_addr_html_in;
   std::vector<std::string> tracked_addr_csv_fmts, tracked_addr_html_fmts;
   std::string arp_scan_options;
-  std::chrono::seconds scan_period;
-  std::chrono::minutes track_period;
+  std::chrono::minutes scan_period, track_period;
   bool verbose;
 
   // Get parameters from command line args.
@@ -76,9 +75,9 @@ struct Parameters {
          bpo::value(&params.arp_scan_options)->default_value(mtt::Set::defaultOptions()),
          "options for arp-scan") //
         ("scan-period",
-         bpo::value<unsigned int>()->default_value(300)->notifier(
-             [&params](const unsigned int val) { params.scan_period = std::chrono::seconds(val); }),
-         "period of MAC address scan in seconds") //
+         bpo::value<unsigned int>()->default_value(5)->notifier(
+             [&params](const unsigned int val) { params.scan_period = std::chrono::minutes(val); }),
+         "period of MAC address scan in minutes") //
         ("track-period",
          bpo::value<unsigned int>()->default_value(60)->notifier([&params](const unsigned int val) {
            params.track_period = std::chrono::minutes(val);
