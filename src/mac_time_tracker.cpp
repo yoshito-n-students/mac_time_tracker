@@ -159,6 +159,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Main loop (never returns)
+  mtt::Time last_end_time = mtt::Time::now();
   for (int i = 0;; ++i) {
     // Step 1: Load known addresses and a template of tracked addresses .html
     mtt::AddressMap known_addrs;
@@ -176,8 +177,9 @@ int main(int argc, char *argv[]) {
     }
 
     // Constants and storage for this tracking period
-    const mtt::Time start_time = mtt::Time::now();               // start time
+    const mtt::Time start_time = last_end_time;                  // start time
     const mtt::Time end_time = start_time + params.track_period; // end time
+    last_end_time = end_time;
     const std::vector<std::string> tracked_addr_csvs =
         format(start_time, params.tracked_addr_csv_fmts); // output .csv filenames
     const std::vector<std::string> tracked_addr_htmls =
