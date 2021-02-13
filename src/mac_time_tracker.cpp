@@ -57,9 +57,10 @@ struct Parameters {
          "          CC:DD:EE:FF:00:11, Jane Smith, Tablet") //
         ("tracked-addr-csv",
          bpo::value(&params.tracked_addr_csv_fmts)
-             ->multitoken()
              ->default_value(std::vector<std::string>(1, default_tracked_addr_csv_fmt),
-                             default_tracked_addr_csv_fmt),
+                             default_tracked_addr_csv_fmt)
+             ->multitoken()
+             ->zero_tokens(),
          "path(s) to output .csv file that contains tracked MAC addresses."
          " will be formatted by std::put_time().") //
         ("tracked-addr-html-in",
@@ -67,9 +68,10 @@ struct Parameters {
          "path to input .html file that will be used as a template") //
         ("tracked-addr-html",
          bpo::value(&params.tracked_addr_html_fmts)
-             ->multitoken()
              ->default_value(std::vector<std::string>(1, default_tracked_addr_html_fmt),
-                             default_tracked_addr_html_fmt),
+                             default_tracked_addr_html_fmt)
+             ->multitoken()
+             ->zero_tokens(),
          "path(s) to output .html file. will be formatted by std::put_time().") //
         ("arp-scan-options",
          bpo::value(&params.arp_scan_options)->default_value(mtt::Set::defaultOptions()),
@@ -169,7 +171,9 @@ int main(int argc, char *argv[]) {
       if (params.verbose) {
         printKnownAddresses(std::cout, params.known_addr_csv, known_addrs);
       }
-      tracked_addrs_html_in = readFile(params.tracked_addr_html_in);
+      if (!params.tracked_addr_html_fmts.empty()) {
+        tracked_addrs_html_in = readFile(params.tracked_addr_html_in);
+      }
     } catch (const std::exception &err) {
       std::cerr << err.what() << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(1));
