@@ -13,17 +13,18 @@
 
     function draw() {
       var data = new google.visualization.arrayToDataTable([
-        ['Name', 'Start', 'End'],
-        // ['Jhon', new Date(2021, 2, 7, 10, 00), new Date(2021, 2, 7, 10, 5)],
+        ['Name', 'Info', 'Start', 'End'],
+        // ['Jhon', '00:11:22:33:44:55 (Phone)', new Date(2021, 2, 7, 10, 00), new Date(2021, 2, 7, 10, 5)],
         // ...
         @DATA_ENTRIES@
       ]);
+      data.sort([0, 1, 2, 3]);
 
       var control = new google.visualization.ControlWrapper({
         controlType: 'ChartRangeFilter',
         containerId: 'control',
         options: {
-          filterColumnIndex: 1,
+          filterColumnIndex: 2, // 'Start'
           ui: {
             chartType: 'ScatterChart',
             chartOptions: {
@@ -34,7 +35,7 @@
               }
             },
             chartView: {
-              columns: [1, { calc: function () { return 0; }, type: 'number' }]
+              columns: [2, { calc: function () { return 0; }, type: 'number' }] // 'Start' vs 0
             }
           }
         }
@@ -44,7 +45,10 @@
         chartType: 'Timeline',
         containerId: 'chart',
         options: {
-          height: (data.getNumberOfRows() + 1) * 13
+          height: data.getDistinctValues(1).length * 45 + 50, // n_drawn_rows * h_row + h_padding
+          timeline: {
+            showBarLabels: false
+          }
         }
       });
 

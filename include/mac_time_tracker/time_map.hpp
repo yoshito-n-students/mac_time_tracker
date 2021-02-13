@@ -69,18 +69,23 @@ public:
     // replace '@DATA_ENTRIES@' to data
     {
       std::ostringstream entries_str;
-      for (const value_type &entry : *this) {
+      for (const_iterator entry = begin(); entry != end(); ++entry) {
         namespace sc = std::chrono;
-        entries_str << "['" << entry.second.category << "', "
+        if (entry != begin()) {
+          entries_str << "," << std::endl;
+        }
+        entries_str << "['" << entry->second.category << "', "
+                    << "'" << entry->second.address.toStr() << " (" << entry->second.description
+                    << ")', "
                     << "new Date("
-                    << sc::duration_cast<sc::milliseconds>(entry.first.time_since_epoch()).count()
+                    << sc::duration_cast<sc::milliseconds>(entry->first.time_since_epoch()).count()
                     << "), "
                     << "new Date("
                     << sc::duration_cast<sc::milliseconds>(
-                           (entry.first + duration).time_since_epoch())
+                           (entry->first + duration).time_since_epoch())
                            .count()
-                    << ")], "
-                    << "// " << duration.count() << " seconds from " << entry.first << std::endl;
+                    << ")] "
+                    << "/* " << duration.count() << " seconds from " << entry->first << " */";
       }
       boost::replace_all(str, "@DATA_ENTRIES@", entries_str.str());
     }
