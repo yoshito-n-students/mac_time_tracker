@@ -167,9 +167,19 @@ mtt::Time getLocal0AMToday() {
 //           or {10:20, 10:30} if now is 10:21 and interval is 10 minutes.
 mtt::PeriodMap::Period findPresentPeriod(const mtt::Time &base,
                                          const std::chrono::minutes &interval) {
-  const int n = (mtt::Time::now() - base) / interval;
-  const mtt::Time start = base + n * interval;
-  return {start, start + interval};
+  const mtt::Time now = mtt::Time::now();
+  const int n = (now - base) / interval;
+  if (now >= base) {
+    //                       <---- period ---->
+    // --@-------------------@========@=======@----------->
+    //  base           base + n*i    now   base + (n+1)*i
+    return {base + n * interval, base + (n + 1) * interval};
+  } else {
+    //         <---- period ---->
+    // --------@==========@=====@-------------------@----->
+    //  base + (n-1)*i   now   base + n*i          base
+    return {base + (n - 1) * interval, base + n * interval};
+  }
 }
 
 ////////
