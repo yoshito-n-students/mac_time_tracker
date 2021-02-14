@@ -130,8 +130,8 @@ void printTrackedAddresses(std::ostream &os, const mtt::PeriodMap &tracked_addrs
   }
 }
 
-////////
-// Misc
+//////////
+// String
 
 std::string readFile(const std::string &filename) {
   std::ifstream ifs(filename);
@@ -149,19 +149,24 @@ std::vector<std::string> format(const mtt::Time &formatter, const std::vector<st
   return formatted;
 }
 
+///////////////
+// Time period
+
+// returns a time point representing today's 0:00 am
+// that can be used as a reasonable base time for findPresentPeriod()
+mtt::Time getLocal0AMToday() {
+  const std::time_t ut_now = std::time(NULL);      // now in the universal time
+  std::tm *const lt_0am = std::localtime(&ut_now); // 0:00 am in the local time
+  lt_0am->tm_hour = lt_0am->tm_min = lt_0am->tm_sec = 0;
+  return mtt::Time(std::chrono::seconds(std::mktime(lt_0am)));
+}
+
 // returns a present period p that meets (p.first <= now < p.second)
 // where (p.first = base + n * interval) and (p.second = p.first + interval).
-// base is 0:00 am, today in local time.
 // i.e. returns {5:00, 6:00} if now is 5:10 and interval is 60 minutes,
 //           or {10:20, 10:30} if now is 10:21 and interval is 10 minutes.
-mtt::PeriodMap::Period findPresentPeriod(const std::chrono::minutes &interval) {
-  // base
-  const std::time_t now_ut = std::time(NULL); // now in universal time
-  std::tm *base_lt = std::localtime(&now_ut); // base in local time
-  base_lt->tm_hour = base_lt->tm_min = base_lt->tm_sec = 0;
-  const mtt::Time base(std::chrono::seconds(std::mktime(base_lt))); // base in universal time
-
-  // present period
+mtt::PeriodMap::Period findPresentPeriod(const mtt::Time &base,
+                                         const std::chrono::minutes &interval) {
   const int n = (mtt::Time::now() - base) / interval;
   const mtt::Time start = base + n * interval;
   return {start, start + interval};
@@ -180,9 +185,10 @@ int main(int argc, char *argv[]) {
   }
 
   // Tracking loop (never returns)
+  const mtt::Time base_time = getLocal0AMToday();
   for (int i_track = 0;; ++i_track) {
     // Constants and storage for this tracking period
-    const mtt::PeriodMap::Period track_period = findPresentPeriod(params.track_interval);
+    const mtt::PeriodMap::Period track_period = findPresentPeriod(base_time, params.track_interval);
     const std::vector<std::string> tracked_addr_csvs =
         format(track_period.first, params.tracked_addr_csv_fmts); // output .csv filenames
     const std::vector<std::string> tracked_addr_htmls =
@@ -217,7 +223,7 @@ int main(int argc, char *argv[]) {
     // Scanning loop that will repeat until the end of this tracking period
     for (int i_scan = 0; mtt::Time::now() < track_period.second; ++i_scan) {
       // Constants for this scanning period
-      const mtt::PeriodMap::Period scan_period = findPresentPeriod(params.scan_interval);
+      const mtt::PeriodMap::Period scan_period = findPresentPeriod(base_time, params.scan_interval);
       if (params.verbose) {
         std::cout << "Scanning period #" << i_track << "." << i_scan << "\n"
                   << "    start: " << scan_period.first << "\n"
