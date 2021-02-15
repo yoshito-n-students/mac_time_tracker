@@ -29,10 +29,6 @@
             chartType: 'ScatterChart',
             chartOptions: {
               height: 70,
-              chartArea: {
-                left: '2%', 
-                width: '96%'
-              },
               vAxis: {
                 viewWindow: {
                   max: 0.5,
