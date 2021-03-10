@@ -46,6 +46,33 @@ public:
   PeriodMap(const Base &base) : Base(base) {}
   PeriodMap(Base &&base) : Base(base) {}
 
+  // returns a copy of this after filling empty slots less than max_fill minutes.
+  // when inserting a filling entry, append desc_suffix to the description.
+  PeriodMap filled(const std::chrono::minutes &max_fill,
+                   const std::string &desc_suffix = "*") const {
+    PeriodMap ret = *this;
+    for (const_iterator entry = begin(); entry != end(); ++entry) {
+      // find the next entry with the same address. set end() if nothing.
+      const_iterator next = entry;
+      while (true) {
+        ++next;
+        if (next == end() || next->first.first - entry->first.second > max_fill) {
+          next = end();
+          break;
+        } else if (next->second.address == entry->second.address) {
+          break;
+        }
+      }
+      // insert a filling entry if possible
+      if (next != end() && next->first.first > entry->first.second) {
+        ret.insert({{entry->first.second, next->first.first},
+                    {entry->second.address, entry->second.category,
+                     entry->second.description + desc_suffix}});
+      }
+    }
+    return ret;
+  }
+
   // make a CSV, each line is '<timestamp>, <address>, <category>, <description>'
   CSV toCSV(const std::string &time_fmt = Time::defaultFormat(),
             const char addr_sep = Address::defaultSeparator()) const {

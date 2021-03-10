@@ -27,7 +27,7 @@ struct Parameters {
   std::string known_addr_csv, tracked_addr_html_in;
   std::vector<std::string> tracked_addr_csv_fmts, tracked_addr_html_fmts;
   std::string arp_scan_options;
-  std::chrono::minutes scan_interval, track_interval;
+  std::chrono::minutes scan_interval, track_interval, max_fill;
   bool verbose;
 
   // Get parameters from command line args.
@@ -86,7 +86,11 @@ struct Parameters {
              ->notifier([&params](const unsigned int val) {
                params.track_interval = std::chrono::minutes(val);
              }),
-         "interval to rotate output .csv and .html files in minutes")              //
+         "interval to rotate output .csv and .html files in minutes") //
+        ("max-fill",
+         bpo::value<unsigned int>()->default_value(60)->notifier(
+             [&params](const unsigned int val) { params.max_fill = std::chrono::minutes(val); }),
+         "fill empty slots on .html equal to or less than this value in minutes")  //
         ("verbose,v", bpo::bool_switch(&params.verbose), "verbose console output") //
         ("help,h", bpo::bool_switch(&help), "print help message");
     // parse command line args
@@ -258,8 +262,9 @@ int main(int argc, char *argv[]) {
         for (const std::string &csv : tracked_addr_csvs) {
           tracked_addrs.toFile(csv);
         }
+        const mtt::PeriodMap filled = tracked_addrs.filled(params.max_fill);
         for (const std::string &html : tracked_addr_htmls) {
-          tracked_addrs.toHTML(html, tracked_addr_html_in);
+          filled.toHTML(html, tracked_addr_html_in);
         }
       } catch (const std::exception &err) {
         std::cerr << err.what() << std::endl;
