@@ -49,7 +49,8 @@
         options: {
           height: data.getDistinctValues(1).length * 45 + 50, // n_drawn_rows * h_row + h_padding
           timeline: {
-            showBarLabels: false
+            showBarLabels: false,
+            colorByRowLabel: true
           }
         }
       });
