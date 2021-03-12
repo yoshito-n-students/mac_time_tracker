@@ -18,6 +18,7 @@ TEST(PeriodMap, generalUse) {
   const mtt::Address addr[] = {mtt::Address::fromStr("00:11:22:33:44:55"),
                                mtt::Address::fromStr("66:77:88:99:AA:BB")};
   mtt::PeriodMap period_map;
+
   // make an instance of PeriodMap
   for (int i_time = 0; i_time < 100; ++i_time) {
     const mtt::Time start[] = {base_time - i_time * duration, base_time + i_time * duration};
@@ -30,6 +31,7 @@ TEST(PeriodMap, generalUse) {
       period_map.insert({{start[1], end[1]}, {addr[1], cat, desc}});
     }
   }
+
   // check data in the instance
   ASSERT_EQ(3000, period_map.size());
   for (const mtt::PeriodMap::value_type entry : period_map) {
@@ -57,12 +59,13 @@ TEST(PeriodMap, generalUse) {
 TEST(PeriodMap, filled) {
   namespace sc = std::chrono;
 
-  mtt::PeriodMap period_map;
-  // make an instance of PeriodMap
   const mtt::Time base_time = mtt::Time::now();
   const mtt::PeriodMap::Info info[] = {
       {mtt::Address::fromStr("00:11:22:33:44:55"), "Category0", "Description0"},
       {mtt::Address::fromStr("66:77:88:99:AA:BB"), "Category1", "Description1"}};
+  mtt::PeriodMap period_map;
+
+  // make an instance of PeriodMap
   period_map.insert({{base_time, base_time + sc::minutes(10)}, info[0]});
   // no gap here (touches)
   period_map.insert({{base_time + sc::minutes(10), base_time + sc::minutes(20)}, info[0]});
