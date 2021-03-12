@@ -53,3 +53,46 @@ TEST(PeriodMap, generalUse) {
     }
   }
 }
+
+TEST(PeriodMap, filled) {
+  namespace sc = std::chrono;
+
+  mtt::PeriodMap period_map;
+  // make an instance of PeriodMap
+  const mtt::Time base_time = mtt::Time::now();
+  const mtt::PeriodMap::Info info[] = {
+      {mtt::Address::fromStr("00:11:22:33:44:55"), "Category0", "Description0"},
+      {mtt::Address::fromStr("66:77:88:99:AA:BB"), "Category1", "Description1"}};
+  period_map.insert({{base_time, base_time + sc::minutes(10)}, info[0]});
+  // no gap here (touches)
+  period_map.insert({{base_time + sc::minutes(10), base_time + sc::minutes(20)}, info[0]});
+  // 10 mins gap, which should be filled
+  period_map.insert({{base_time + sc::minutes(30), base_time + sc::minutes(40)}, info[0]});
+  // 60 mins gap, which should be filled
+  period_map.insert({{base_time + sc::minutes(100), base_time + sc::minutes(110)}, info[0]});
+  // 100 mins gap
+  period_map.insert({{base_time + sc::minutes(210), base_time + sc::minutes(220)}, info[0]});
+  // 10 mins gap but info is different
+  period_map.insert({{base_time + sc::minutes(230), base_time + sc::minutes(240)}, info[1]});
+  // no gap (overlaps)
+  period_map.insert({{base_time + sc::minutes(235), base_time + sc::minutes(245)}, info[1]});
+  ASSERT_EQ(7, period_map.size());
+
+  // fill gaps equal to or less than 60 mins
+  const mtt::PeriodMap filled_map =
+      period_map.filled(sc::hours(1), /* suffix for filling entry's description = */ "-filled");
+  ASSERT_EQ(9, filled_map.size());
+
+  // check what was filled
+  const mtt::PeriodMap::const_iterator filled_entry[] = {
+      filled_map.find({base_time + sc::minutes(20), base_time + sc::minutes(30)}),
+      filled_map.find({base_time + sc::minutes(40), base_time + sc::minutes(100)})};
+  ASSERT_NE(filled_map.end(), filled_entry[0]);
+  ASSERT_EQ(info[0].address, filled_entry[0]->second.address);
+  ASSERT_EQ(info[0].category, filled_entry[0]->second.category);
+  ASSERT_EQ(info[0].description + "-filled", filled_entry[0]->second.description);
+  ASSERT_NE(filled_map.end(), filled_entry[1]);
+  ASSERT_EQ(info[0].address, filled_entry[1]->second.address);
+  ASSERT_EQ(info[0].category, filled_entry[1]->second.category);
+  ASSERT_EQ(info[0].description + "-filled", filled_entry[1]->second.description);
+}
