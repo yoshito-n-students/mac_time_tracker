@@ -46,10 +46,9 @@ public:
   PeriodMap(const Base &base) : Base(base) {}
   PeriodMap(Base &&base) : Base(base) {}
 
-  // returns a copy of this after filling empty slots less than max_fill minutes.
+  // returns a copy of this after filling empty slots less than max_fill.
   // when inserting a filling entry, append desc_suffix to the description.
-  PeriodMap filled(const std::chrono::minutes &max_fill,
-                   const std::string &desc_suffix = "*") const {
+  PeriodMap filled(const Time::duration &max_fill, const std::string &desc_suffix = "*") const {
     PeriodMap ret = *this;
     for (const_iterator entry = begin(); entry != end(); ++entry) {
       // find the next entry with the same address. set end() if nothing.
